@@ -1,0 +1,1 @@
+{"nparams":2,"first_s":706.207195129,"warm_min_s":590.357216896,"load_s":12.250371614,"second_s":589.320651864,"threads":1,"route":"adjoint-default","julia":"1.10.12","precompile_s":1015,"max_rel_err_vs_forwarddiff":0.019512017881129107,"ok":true}

@@ -1,0 +1,1 @@
+{"nparams":8,"first_s":474.417162242,"warm_min_s":1.601411663,"load_s":12.035571866,"second_s":1.599444309,"threads":1,"route":"enzyme","julia":"1.10.12","precompile_s":1048,"max_rel_err_vs_forwarddiff":9.341388381074383e-10,"ok":true}
