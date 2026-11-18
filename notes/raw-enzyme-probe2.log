@@ -1,0 +1,147 @@
+ForwardDiff reference vjp: [0.0003138013743564993, 130156.21557752886]
+Enzyme reverse FAILED: MixedReturnException: Custom Rule for method returns type SciMLBase.LinearProblem{Vector{Float64}, true, Matrix{Float64}, Vector{Float64}, Tuple{Nothing, Vector{Float64}, SciMLBase.DespecializedParameters, Float64}, Nothing, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}}, which has mixed internal activity types. This is not presently supported.
+See https://enzyme.mit.edu/julia/stable/faq/#Mixed-activity for more information.
+
+Hint: if the reason for the return type is unclear, you can catch this exception as `err` and call `code_typed(err)` to inspect the errornous code.
+
+SciMLBase.Linea
+reverse took 224.6 s
+┌ Warning: Using fallback BLAS replacements for (["dasum_64_", "dnrm2_64_", "daxpy_64_", "dsymv_64_", "dgemv_64_", "dgemm_64_", "dsyrk_64_"]), performance may be degraded
+└ @ Enzyme.Compiler ~/.julia/packages/Enzyme/5cjcV/src/compiler.jl:6597
+┌ Warning: Using fallback BLAS replacements for (["dasum_64_", "dnrm2_64_", "daxpy_64_", "dsymv_64_", "dgemv_64_", "dgemm_64_", "dsyrk_64_"]), performance may be degraded
+└ @ Enzyme.Compiler ~/.julia/packages/Enzyme/5cjcV/src/compiler.jl:6597
+┌ Warning: Using fallback BLAS replacements for (["dasum_64_", "dnrm2_64_", "daxpy_64_", "dsymv_64_", "dgemv_64_", "dgemm_64_", "dsyrk_64_"]), performance may be degraded
+└ @ Enzyme.Compiler ~/.julia/packages/Enzyme/5cjcV/src/compiler.jl:6597
+
+[42919] signal (15): Terminated: 15
+in expression starting at /Users/singhharsh1708/Work/pasteur/julia-stiff-tesseract/julia/scripts/enzyme_probe.jl:23
+_ZN15GenericTypeTreeIPN4llvm4TypeEE11checkedOrInERKNSt3__16vectorIiNS4_9allocatorIiEEEE19GenericConcreteTypeIS2_EbRb at /Users/singhharsh1708/.julia/artifacts/68bf268bc38afe5ce286599786df609025d43a5c/lib/libEnzyme-15.dylib (unknown line)
+_ZN15GenericTypeTreeIPN4llvm4TypeEE4orInERKS3_b at /Users/singhharsh1708/.julia/artifacts/68bf268bc38afe5ce286599786df609025d43a5c/lib/libEnzyme-15.dylib (unknown line)
+_ZN12TypeAnalyzer20visitInsertValueInstERN4llvm15InsertValueInstE at /Users/singhharsh1708/.julia/artifacts/68bf268bc38afe5ce286599786df609025d43a5c/lib/libEnzyme-15.dylib (unknown line)
+_ZN12TypeAnalyzer10visitValueERN4llvm5ValueE at /Users/singhharsh1708/.julia/artifacts/68bf268bc38afe5ce286599786df609025d43a5c/lib/libEnzyme-15.dylib (unknown line)
+_ZN12TypeAnalyzer3runEv at /Users/singhharsh1708/.julia/artifacts/68bf268bc38afe5ce286599786df609025d43a5c/lib/libEnzyme-15.dylib (unknown line)
+_ZN12TypeAnalysis15analyzeFunctionERK10FnTypeInfo at /Users/singhharsh1708/.julia/artifacts/68bf268bc38afe5ce286599786df609025d43a5c/lib/libEnzyme-15.dylib (unknown line)
+_ZN18DiffeGradientUtils15CreateFromCloneER11EnzymeLogic14DerivativeModebbjPN4llvm8FunctionERNS3_17TargetLibraryInfoER12TypeAnalysisR10FnTypeInfo10DIFFE_TYPEbbNS3_8ArrayRefISC_EEbbPNS3_4TypeEb at /Users/singhharsh1708/.julia/artifacts/68bf268bc38afe5ce286599786df609025d43a5c/lib/libEnzyme-15.dylib (unknown line)
+_ZN11EnzymeLogic17CreateForwardDiffE14RequestContextPN4llvm8FunctionE10DIFFE_TYPENS1_8ArrayRefIS4_EER12TypeAnalysisb14DerivativeModebbbjPNS1_4TypeERK10FnTypeInfobNSt3__16vectorIbNSF_9allocatorIbEEEEPK15AugmentedReturnb at /Users/singhharsh1708/.julia/artifacts/68bf268bc38afe5ce286599786df609025d43a5c/lib/libEnzyme-15.dylib (unknown line)
+EnzymeCreateForwardDiff at /Users/singhharsh1708/.julia/artifacts/68bf268bc38afe5ce286599786df609025d43a5c/lib/libEnzyme-15.dylib (unknown line)
+EnzymeCreateForwardDiff at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/api.jl:298
+unknown function (ip: 0x17dafc21f)
+_jl_invoke at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:0 [inlined]
+ijl_apply_generic at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:3081
+macro expansion at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:3635 [inlined]
+macro expansion at /Users/singhharsh1708/.julia/packages/LLVM/JAJT6/src/base.jl:669 [inlined]
+enzyme! at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:3458
+unknown function (ip: 0x1602385d7)
+_jl_invoke at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:0 [inlined]
+ijl_apply_generic at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:3081
+compile_unhooked_impl at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:7151
+macro expansion at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:6272 [inlined]
+macro expansion at /Users/singhharsh1708/.julia/packages/ScopedValues/sILa0/src/ScopedValues.jl:213 [inlined]
+compile_unhooked at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:6271
+#498 at /Users/singhharsh1708/.julia/packages/GPUCompiler/iAwsC/src/driver.jl:91 [inlined]
+report_failure at /Users/singhharsh1708/.julia/packages/GPUCompiler/iAwsC/src/driver.jl:97
+compile at /Users/singhharsh1708/.julia/packages/GPUCompiler/iAwsC/src/driver.jl:90 [inlined]
+_thunk at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:8167
+_thunk at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:8165 [inlined]
+cached_compilation at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:8259 [inlined]
+thunkbase at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:8468
+thunk_generator at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:8614
+unknown function (ip: 0x15adadc57)
+_jl_invoke at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:0 [inlined]
+ijl_apply_generic at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:3081
+jl_call_staged at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/method.c:542
+ijl_code_for_staged at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/method.c:595
+jl_code_for_interpreter at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/interpreter.c:654
+jl_fptr_interpret_call at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/interpreter.c:679
+macro expansion at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/rules/jitrules.jl:328 [inlined]
+runtime_generic_fwd at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/rules/jitrules.jl:377
+unknown function (ip: 0x17f5e4307)
+_jl_invoke at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:0 [inlined]
+ijl_apply_generic at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:3081
+#__solve#125 at /Users/singhharsh1708/.julia/packages/OrdinaryDiffEqCore/0bdtc/src/solve.jl:10
+__solve at /Users/singhharsh1708/.julia/packages/OrdinaryDiffEqCore/0bdtc/src/solve.jl:1 [inlined]
+#solve_call#41 at /Users/singhharsh1708/.julia/packages/DiffEqBase/WgyOh/src/solve.jl:228 [inlined]
+solve_call at /Users/singhharsh1708/.julia/packages/DiffEqBase/WgyOh/src/solve.jl:193 [inlined]
+solve_call at /Users/singhharsh1708/.julia/packages/DiffEqBase/WgyOh/src/solve.jl:0 [inlined]
+fwddiffejulia_solve_call_14164_inner_1wrap at /Users/singhharsh1708/.julia/packages/DiffEqBase/WgyOh/src/solve.jl:0
+macro expansion at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:8093 [inlined]
+enzyme_call at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:7508 [inlined]
+ForwardModeThunk at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:7406 [inlined]
+macro expansion at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/rules/jitrules.jl:344 [inlined]
+runtime_generic_fwd at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/rules/jitrules.jl:377
+unknown function (ip: 0x17ebd4293)
+_jl_invoke at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:0 [inlined]
+ijl_apply_generic at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:3081
+#solve_up#47 at /Users/singhharsh1708/.julia/packages/DiffEqBase/WgyOh/src/solve.jl:705
+solve_up at /Users/singhharsh1708/.julia/packages/DiffEqBase/WgyOh/src/solve.jl:675 [inlined]
+#solve#46 at /Users/singhharsh1708/.julia/packages/DiffEqBase/WgyOh/src/solve.jl:659
+solve at /Users/singhharsh1708/.julia/packages/DiffEqBase/WgyOh/src/solve.jl:647 [inlined]
+solve at /Users/singhharsh1708/.julia/packages/DiffEqBase/WgyOh/src/solve.jl:0 [inlined]
+fwddiffejulia_solve_13790_inner_1wrap at /Users/singhharsh1708/.julia/packages/DiffEqBase/WgyOh/src/solve.jl:0
+macro expansion at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:8093 [inlined]
+enzyme_call at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:7508 [inlined]
+ForwardModeThunk at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:7406 [inlined]
+macro expansion at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/rules/jitrules.jl:344 [inlined]
+runtime_generic_fwd at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/rules/jitrules.jl:377
+unknown function (ip: 0x17e5140df)
+_jl_invoke at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:0 [inlined]
+ijl_apply_generic at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:3081
+_simulate at /Users/singhharsh1708/Work/pasteur/julia-stiff-tesseract/julia/src/StiffTesseract.jl:97 [inlined]
+_simulate at /Users/singhharsh1708/Work/pasteur/julia-stiff-tesseract/julia/src/StiffTesseract.jl:0 [inlined]
+fwddiffejulia__simulate_12600_inner_1wrap at /Users/singhharsh1708/Work/pasteur/julia-stiff-tesseract/julia/src/StiffTesseract.jl:0
+macro expansion at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:8093 [inlined]
+enzyme_call at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:7508 [inlined]
+ForwardModeThunk at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:7406 [inlined]
+fwddiff_with_return at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/rules/jitrules.jl:1144 [inlined]
+macro expansion at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/rules/jitrules.jl:1188 [inlined]
+runtime_iterate_fwd at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/rules/jitrules.jl:1224
+unknown function (ip: 0x17dcc41b7)
+_jl_invoke at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:0 [inlined]
+ijl_apply_generic at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:3081
+apply_jl at /Users/singhharsh1708/Work/pasteur/julia-stiff-tesseract/julia/scripts/enzyme_probe.jl:7 [inlined]
+fwddiffejulia_apply_jl_12397wrap at /Users/singhharsh1708/Work/pasteur/julia-stiff-tesseract/julia/scripts/enzyme_probe.jl:0
+macro expansion at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:8093 [inlined]
+enzyme_call at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:7508 [inlined]
+ForwardModeThunk at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/compiler.jl:7406 [inlined]
+autodiff at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/Enzyme.jl:782 [inlined]
+autodiff at /Users/singhharsh1708/.julia/packages/Enzyme/5cjcV/src/Enzyme.jl:671
+unknown function (ip: 0x17dc00087)
+_jl_invoke at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:0 [inlined]
+ijl_apply_generic at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:3081
+macro expansion at /Users/singhharsh1708/Work/pasteur/julia-stiff-tesseract/julia/scripts/enzyme_probe.jl:24 [inlined]
+top-level scope at ./timing.jl:395
+jl_toplevel_eval_flex at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/toplevel.c:925
+jl_toplevel_eval_flex at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/toplevel.c:877
+ijl_toplevel_eval at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/toplevel.c:943 [inlined]
+ijl_toplevel_eval_in at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/toplevel.c:985
+eval at ./boot.jl:385 [inlined]
+include_string at ./loading.jl:2160
+_jl_invoke at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:0 [inlined]
+ijl_apply_generic at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:3081
+_include at ./loading.jl:2220
+include at ./Base.jl:495
+jfptr_include_46571.1 at /Users/singhharsh1708/.julia/juliaup/julia-1.10.12+0.aarch64.apple.darwin14/Julia-1.10.app/Contents/Resources/julia/lib/julia/sys.dylib (unknown line)
+_jl_invoke at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:0 [inlined]
+ijl_apply_generic at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:3081
+exec_options at ./client.jl:316
+_start at ./client.jl:550
+jfptr__start_83229.1 at /Users/singhharsh1708/.julia/juliaup/julia-1.10.12+0.aarch64.apple.darwin14/Julia-1.10.app/Contents/Resources/julia/lib/julia/sys.dylib (unknown line)
+_jl_invoke at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:0 [inlined]
+ijl_apply_generic at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/gf.c:3081
+jl_apply at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/julia.h:1979 [inlined]
+true_main at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/jlapi.c:596
+jl_repl_entrypoint at /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/builder-honeycrisp-R17H3W25T9.1/019ebd63-635e-4155-b60a-9d2815900786/trusted/build/builder-honeycrisp-R17H3W25T9-1/julialang/julia-ci/src/jlapi.c:745
+unknown function (ip: 0x0)
+Allocations: 643630808 (Pool: 643095902; Big: 534906); GC: 154
+┌ Warning: int.jl:87:0: in function preprocess_julia___ode_init_141_11169 {} addrspace(10)* ({} addrspace(10)*, i8, i8, i8, i8, double, double, double, { [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64] } addrspace(11)*, {} addrspace(10)*, { i64, double } addrspace(11)*): Enzyme: Cannot deduce type of load   %unbox153 = load i64, i64 addrspace(10)* %294, align 8, !dbg !602, !tbaa !248, !alias.scope !252, !noalias !286, assumed {[-1]:Pointer}
+└ @ LLVM ~/.julia/packages/LLVM/JAJT6/src/core/context.jl:231
+┌ Warning: int.jl:87:0: in function preprocess_julia___ode_init_141_11169 {} addrspace(10)* ({} addrspace(10)*, i8, i8, i8, i8, double, double, double, { [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64] } addrspace(11)*, {} addrspace(10)*, { i64, double } addrspace(11)*): Enzyme: Cannot deduce type of load   %unbox152 = load i64, i64 addrspace(10)* %289, align 8, !dbg !597, !tbaa !248, !alias.scope !252, !noalias !286, assumed {[-1]:Pointer}
+└ @ LLVM ~/.julia/packages/LLVM/JAJT6/src/core/context.jl:231
+┌ Warning: int.jl:87:0: in function preprocess_julia___ode_init_141_11169 {} addrspace(10)* ({} addrspace(10)*, i8, i8, i8, i8, double, double, double, { [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64] } addrspace(11)*, {} addrspace(10)*, { i64, double } addrspace(11)*): Enzyme: Cannot deduce type of load   %unbox153 = load i64, i64 addrspace(10)* %294, align 8, !dbg !602, !tbaa !248, !alias.scope !252, !noalias !286, assumed {[-1]:Pointer}
+└ @ LLVM ~/.julia/packages/LLVM/JAJT6/src/core/context.jl:231
+┌ Warning: int.jl:87:0: in function preprocess_julia___ode_init_141_11169 {} addrspace(10)* ({} addrspace(10)*, i8, i8, i8, i8, double, double, double, { [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64] } addrspace(11)*, {} addrspace(10)*, { i64, double } addrspace(11)*): Enzyme: Cannot deduce type of load   %unbox152 = load i64, i64 addrspace(10)* %289, align 8, !dbg !597, !tbaa !248, !alias.scope !252, !noalias !286, assumed {[-1]:Pointer}
+└ @ LLVM ~/.julia/packages/LLVM/JAJT6/src/core/context.jl:231
+┌ Warning: int.jl:87:0: in function preprocess_julia___ode_init_141_14174 {} addrspace(10)* ({} addrspace(10)*, i8, i8, i8, i8, double, double, double, { [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64] } addrspace(11)*, {} addrspace(10)*, { i64, double } addrspace(11)*): Enzyme: Cannot deduce type of load   %unbox152 = load i64, i64 addrspace(10)* %230, align 8, !dbg !591, !tbaa !242, !alias.scope !246, !noalias !280, assumed {[-1]:Pointer}
+└ @ LLVM ~/.julia/packages/LLVM/JAJT6/src/core/context.jl:231
+┌ Warning: int.jl:87:0: in function preprocess_julia___ode_init_141_14174 {} addrspace(10)* ({} addrspace(10)*, i8, i8, i8, i8, double, double, double, { [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64], [1 x i64] } addrspace(11)*, {} addrspace(10)*, { i64, double } addrspace(11)*): Enzyme: Cannot deduce type of load   %unbox153 = load i64, i64 addrspace(10)* %235, align 8, !dbg !596, !tbaa !242, !alias.scope !246, !noalias !280, assumed {[-1]:Pointer}
+└ @ LLVM ~/.julia/packages/LLVM/JAJT6/src/core/context.jl:231

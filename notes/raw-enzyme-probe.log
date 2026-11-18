@@ -1,0 +1,19 @@
+ForwardDiff reference vjp: [0.0003138013743564993, 130156.21557752886]
+Enzyme reverse FAILED: IllegalTypeAnalysisException: Enzyme compilation failed due to illegal type analysis.
+ This usually indicates the use of a Union type, which is not fully supported with Enzyme.API.strictAliasing set to true [the default].
+ Ideally, remove the union (which will also make your code faster), or try setting Enzyme.API.strictAliasing!(false) before any autodiff call.
+ To toggle more information for debugging (needed for bug reports), set Enzyme.Compiler.VERBOSE_ERRORS[] = true (default false)
+Failure within method:
+
+var"#build_lindauer#2"(::Bool, ::typeof(StiffTesseract.build_lindauer))
+     @ Stif
+reverse took 60.2 s
+Enzyme forward FAILED: IllegalTypeAnalysisException: Enzyme compilation failed due to illegal type analysis.
+ This usually indicates the use of a Union type, which is not fully supported with Enzyme.API.strictAliasing set to true [the default].
+ Ideally, remove the union (which will also make your code faster), or try setting Enzyme.API.strictAliasing!(false) before any autodiff call.
+ To toggle more information for debugging (needed for bug reports), set Enzyme.Compiler.VERBOSE_ERRORS[] = true (default false)
+Failure within method:
+
+var"#build_lindauer#2"(::Bool, ::typeof(StiffTesseract.build_lindauer))
+     @ Stif
+forward took 49.7 s

@@ -1,0 +1,10 @@
+load (using StiffTesseract): 6.0 s
+as published: fast_allom, V_blood 1400 uL, 5.0 mg/kg:-6.006 (QSPAtlas -6.0)  RO(26 wk) 24.32 %   3.27 s
+as published: fast_allom, V_blood 1400 uL, 0.5 mg/kg:-4.746 (QSPAtlas -4.7)  RO(26 wk) 11.71 %   0.01 s
+fix: med_growth, V_blood 5 L, 5.0 mg/kg:            -1.302 (QSPAtlas -1.302)  RO(26 wk) 64.38 %   0.01 s
+fix: med_growth, V_blood 5 L, 0.5 mg/kg:            -0.401 (QSPAtlas -0.401)  RO(26 wk) 52.31 %   0.01 s
+warm simulate: 0.015 s; jacobian first 3.1 s, warm 0.068 s (28 outputs x 4 params)
+d/dV_blood  max rel diff AD vs FD: 1.13e-6
+d/dL0       max rel diff AD vs FD: 2.6e-8
+d/dSLtg     max rel diff AD vs FD: 2.33e-9
+d/dKdegPD1  max rel diff AD vs FD: 3.04e-7

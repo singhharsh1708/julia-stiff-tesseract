@@ -1,0 +1,22 @@
+name = "StiffTesseract"
+uuid = "6b2a7c1e-4f3d-4c8e-9a51-2d7e8b0c3f11"
+version = "0.1.0"
+
+[deps]
+Enzyme = "7da242da-08ed-463a-9acd-ee780be4f1d9"
+ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
+ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
+OpenSSL_jll = "458c3c95-2e84-50aa-8efc-19380b2a3a95"
+OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
+PythonCall = "6099a3de-0909-46bc-b1f4-468b9a2dfc0d"
+SciMLSensitivity = "1ed8b502-d754-442c-8d5d-10ac956f44a1"
+SciMLStructures = "53ae85a6-f571-4167-b2af-e1d143709226"
+SymbolicIndexingInterface = "2efcf032-c050-4f8e-a9bb-153293bab1f5"
+Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
+
+[compat]
+OpenSSL_jll = "3.0.0 - 3.5"
+PythonCall = "=0.9.37"
+
+[preferences]

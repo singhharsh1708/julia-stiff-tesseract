@@ -1,0 +1,43 @@
+start log ratios [-5.99446425 -4.73271452] loss 40.991153313819794 grad [-10.45870075 300.79037336]
+grad AD [-10.45870075 300.79037336] FD [-10.45871857 300.79036081]
+  iter   1  V_blood       1400.0 uL  exponent -0.2500  loss 4.099e+01
+  iter   2  V_blood   48784747.3 uL  exponent -0.6000  loss 2.894e+00
+  iter   3  V_blood   47802144.2 uL  exponent -0.5832  loss 2.628e+00
+  iter   4  V_blood   44065697.5 uL  exponent -0.5161  loss 1.446e+00
+  iter   5  V_blood   31820993.3 uL  exponent -0.2478  loss 7.236e-01
+  iter   6  V_blood     509105.8 uL  exponent -0.0871  loss 3.446e+00
+  iter   7  V_blood    5935591.6 uL  exponent -0.1825  loss 1.839e-03
+  iter   8  V_blood    6090151.4 uL  exponent -0.1829  loss 1.634e-03
+  iter   9  V_blood    6065708.4 uL  exponent -0.1821  loss 1.610e-03
+  iter  10  V_blood    5968913.3 uL  exponent -0.1786  loss 1.521e-03
+  iter  11  V_blood    4547287.1 uL  exponent -0.1126  loss 8.781e-04
+  iter  12  V_blood    4931250.7 uL  exponent -0.1286  loss 4.526e-04
+  iter  13  V_blood    4737171.8 uL  exponent -0.1135  loss 1.323e-04
+  iter  14  V_blood    4435231.6 uL  exponent -0.0915  loss 4.641e-06
+  iter  15  V_blood    4494525.6 uL  exponent -0.0949  loss 1.346e-07
+  iter  16  V_blood    4485643.8 uL  exponent -0.0944  loss 1.463e-10
+  iter  17  V_blood    4485334.6 uL  exponent -0.0944  loss 5.596e-15
+{
+ "first value_and_grad s": 16.045642166980542,
+ "warm value_and_grad s": 0.20895541703794152,
+ "grad AD": [
+  -10.458700751293604,
+  300.79037336266697
+ ],
+ "grad FD": [
+  -10.458718566752623,
+  300.790360808989
+ ],
+ "calibration s": 2.4044916249695234,
+ "value_and_grad evaluations": 17,
+ "result": {
+  "V_blood_uL": 4485334.607830693,
+  "exponent": -0.09437923064290107,
+  "loss": 5.595994663177599e-15,
+  "log_ratios": [
+   -1.2899999994819844,
+   -0.3900000748045876
+  ],
+  "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH"
+ }
+}

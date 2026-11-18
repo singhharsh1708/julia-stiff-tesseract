@@ -1,0 +1,11 @@
+=== fault: glue   check_gradients took 4.5 s   passed: False
+Gradient check along a random direction (seed=0, rtol=0.01, steps 1e-01 .. 1e-04)
+
+                                                 grad.d   fin. diff  rel. error    step  result
+  pipeline                                    -2.52e+00   -2.77e+00    8.96e-02   1e-03  FAIL
+
+  #1 exponent, mouse_values -> human_values   -3.90e-03   -3.90e-03    6.72e-08   1e-03  ok
+  #2 lindauer-julia                           -9.14e+02   -9.14e+02    2.85e-08   1e-03  ok
+  #3 lindauer-julia                            1.16e+04    1.16e+04    7.98e-07   1e-03  ok
+
+Every Tesseract agrees with finite differences at the inputs it received, but the pipeline does not. The problem is in the JAX code between the Tesseracts: look for jax.lax.stop_gradient, operations with zero or undefined derivatives (round, argmax, integer casts, comparisons, sqrt at 0), or a custom_vjp.

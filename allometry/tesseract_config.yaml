@@ -1,0 +1,3 @@
+name: "allometry"
+version: "0.1.0"
+description: "Allometric scaling of mouse rate constants to man (Lindauer et al. 2017)."

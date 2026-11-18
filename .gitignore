@@ -1,0 +1,10 @@
+.tesseract-venv/
+__pycache__/
+julia/Manifest.toml.bak
+.venv/
+julia/lock.pid
+julia/pyjuliapkg/
+.tess-out/
+results/
+julia/.CondaPkg/
+.tess-out/

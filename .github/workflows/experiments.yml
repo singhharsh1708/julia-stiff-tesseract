@@ -1,0 +1,112 @@
+name: experiments
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["experiments/**", "julia/**", "tesseract_api.py", ".github/workflows/experiments.yml"]
+
+concurrency:
+  group: experiments-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  JULIA_VERSION: "1.10.12"
+
+jobs:
+  routes:
+    name: "derivative route: ${{ matrix.route }}, ${{ matrix.nparams }} params"
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        route: [forwarddiff, enzyme, adjoint-default, adjoint-gauss-enzyme, adjoint-gauss-reversediff, adjoint-interp-enzyme]
+        nparams: [2, 8, 16]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ env.JULIA_VERSION }}
+      - uses: julia-actions/cache@v2
+      - name: Instantiate and precompile
+        run: |
+          start=$(date +%s)
+          julia --project=julia -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
+          echo "precompile_s=$(( $(date +%s) - start ))" >> "$GITHUB_ENV"
+      - name: Run
+        run: |
+          mkdir -p results
+          julia --project=julia experiments/routes.jl ${{ matrix.route }} ${{ matrix.nparams }} \
+            results/route-${{ matrix.route }}-${{ matrix.nparams }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: route-${{ matrix.route }}-${{ matrix.nparams }}
+          path: results/
+
+  sysimage:
+    name: "first-call latency: system image through juliacall"
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      PYTHON_JULIACALL_PROJECT: ${{ github.workspace }}/julia
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ env.JULIA_VERSION }}
+      - uses: julia-actions/cache@v2
+      - uses: astral-sh/setup-uv@v6
+      - name: Python environment
+        run: |
+          uv venv --python 3.12 .venv
+          uv pip install --python .venv/bin/python "tesseract-core[runtime]==1.15.0" juliacall==0.9.37 numpy
+      - name: Instantiate and precompile
+        run: |
+          julia --project=julia -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
+          julia --project=experiments/sysimage -e 'using Pkg; Pkg.instantiate()'
+      - name: Baseline (no system image), twice
+        run: |
+          export PYTHON_JULIACALL_EXE="$(julia -e 'print(joinpath(Sys.BINDIR, "julia"))')"
+          mkdir -p results
+          .venv/bin/python experiments/sysimage/workload.py results/sysimage-baseline-1.json
+          .venv/bin/python experiments/sysimage/workload.py results/sysimage-baseline-2.json
+      - name: Trace what the workload compiles
+        run: |
+          export PYTHON_JULIACALL_EXE="$(julia -e 'print(joinpath(Sys.BINDIR, "julia"))')"
+          PYTHON_JULIACALL_TRACE_COMPILE="$PWD/results/traces.jl" \
+            .venv/bin/python experiments/sysimage/workload.py results/sysimage-traced.json
+          wc -l results/traces.jl
+      - name: Build the system image
+        run: |
+          start=$(date +%s)
+          julia --project=experiments/sysimage experiments/sysimage/build.jl results/traces.jl "$PWD/sys.so"
+          echo "{\"build_s\": $(( $(date +%s) - start )), \"size_bytes\": $(stat -c %s sys.so)}" > results/sysimage-build.json
+      - name: With the system image, twice
+        run: |
+          export PYTHON_JULIACALL_EXE="$(julia -e 'print(joinpath(Sys.BINDIR, "julia"))')"
+          export PYTHON_JULIACALL_SYSIMAGE="$PWD/sys.so"
+          .venv/bin/python experiments/sysimage/workload.py results/sysimage-with-1.json
+          .venv/bin/python experiments/sysimage/workload.py results/sysimage-with-2.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sysimage
+          path: results/
+
+  summary:
+    needs: [routes, sysimage]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Summarise
+        run: python3 experiments/summarise.py artifacts >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: summary
+          path: artifacts/

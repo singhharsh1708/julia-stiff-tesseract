@@ -1,0 +1,11 @@
+=== fault: lindauer_vjp   check_gradients took 4.6 s   passed: False
+Gradient check along a random direction (seed=0, rtol=0.01, steps 1e-01 .. 1e-04)
+
+                                                 grad.d   fin. diff  rel. error    step  result
+  pipeline                                    -8.48e+00   -2.77e+00    6.73e-01   1e-03  FAIL
+
+  #1 exponent, mouse_values -> human_values   -3.90e-03   -3.90e-03    6.72e-08   1e-03  ok
+  #2 lindauer-julia                            4.96e+03   -9.14e+02    1.18e+00   1e-03  FAIL
+  #3 lindauer-julia                            2.28e+05    1.16e+04    9.49e-01   1e-03  FAIL
+
+#2 lindauer-julia disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there.

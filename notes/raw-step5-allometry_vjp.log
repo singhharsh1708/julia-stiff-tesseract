@@ -1,0 +1,11 @@
+=== fault: allometry_vjp   check_gradients took 4.6 s   passed: False
+Gradient check along a random direction (seed=0, rtol=0.01, steps 1e-01 .. 1e-04)
+
+                                                 grad.d   fin. diff  rel. error    step  result
+  pipeline                                    -2.98e+00   -2.77e+00    7.09e-02   1e-03  FAIL
+
+  #1 exponent, mouse_values -> human_values   -4.78e-04   -3.90e-03    8.77e-01   1e-03  FAIL
+  #2 lindauer-julia                            7.57e+13         nan         inf   1e-01  FAIL  (finite difference too uncertain)
+  #3 lindauer-julia                            2.79e+15         nan         inf   1e-01  FAIL  (finite difference too uncertain)
+
+#1 exponent, mouse_values -> human_values disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there.

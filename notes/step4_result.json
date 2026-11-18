@@ -1,0 +1,24 @@
+{
+ "first value_and_grad s": 16.045642166980542,
+ "warm value_and_grad s": 0.20895541703794152,
+ "grad AD": [
+  -10.458700751293604,
+  300.79037336266697
+ ],
+ "grad FD": [
+  -10.458718566752623,
+  300.790360808989
+ ],
+ "calibration s": 2.4044916249695234,
+ "value_and_grad evaluations": 17,
+ "result": {
+  "V_blood_uL": 4485334.607830693,
+  "exponent": -0.09437923064290107,
+  "loss": 5.595994663177599e-15,
+  "log_ratios": [
+   -1.2899999994819844,
+   -0.3900000748045876
+  ],
+  "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH"
+ }
+}
