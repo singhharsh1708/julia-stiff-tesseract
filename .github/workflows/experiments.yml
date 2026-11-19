@@ -4,7 +4,9 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ["experiments/**", "lindauer/**", "pipeline/**", "tools/**", ".github/workflows/experiments.yml"]
+    # tools/ matters here only through its environment (the routes and probes run in it), not its scripts
+    paths: ["experiments/**", "lindauer/**", "pipeline/**", "tools/Project.toml", "tools/Manifest.toml",
+            ".github/workflows/experiments.yml"]
 
 concurrency:
   group: experiments-${{ github.ref }}
