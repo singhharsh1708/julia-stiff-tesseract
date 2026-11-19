@@ -4,9 +4,14 @@
 using Test: TestLogger
 using Logging: with_logger, Warn
 
-"Run `f()`; return its value and the number of maxiters warnings it logged (other log records are dropped)."
+"""
+Run `f()`; return its value, the number of maxiters warnings it logged, and the other warnings (their first
+200 characters, each once), so a dtmin or instability stop is not lost either.
+"""
 function count_maxiters(f)
     logger = TestLogger(; min_level = Warn)
     value = with_logger(f, logger)
-    return value, count(r -> occursin("maxiters", string(r.message)), logger.logs)
+    messages = [string(r.message) for r in logger.logs]
+    n = count(m -> occursin("maxiters", m), messages)
+    return value, n, unique(first.(filter(m -> !occursin("maxiters", m), messages), 200))
 end

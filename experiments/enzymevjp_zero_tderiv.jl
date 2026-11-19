@@ -30,7 +30,7 @@ ref = ForwardDiff.gradient(th -> tv_end(th, nothing), theta)
 relerr(g) = maximum(abs.(g .- ref) ./ abs.(ref))
 sa = GaussAdjoint(autojacvec = ReverseDiffVJP(true))
 result = Dict{String, Any}("forwarddiff" => ref)
-g, n = count_maxiters(() -> Zygote.gradient(th -> tv_end(th, sa), theta)[1])
+g, n, _ = count_maxiters(() -> Zygote.gradient(th -> tv_end(th, sa), theta)[1])
 result["reversediffvjp"] = Dict("gradient" => g, "max_rel_err" => relerr(g), "maxiters_warnings" => n)
 
 const CALLS = Ref(0)
@@ -38,7 +38,7 @@ function (sol::SciMLBase.ODESolution)(t::ForwardDiff.Dual{T, V, N}; kw...) where
     CALLS[] += 1
     return [ForwardDiff.Dual{T}(x, zero(ForwardDiff.Partials{N, V})) for x in sol(ForwardDiff.value(t); kw...)]
 end
-g, n = count_maxiters(() -> Zygote.gradient(th -> tv_end(th, sa), theta)[1])
+g, n, _ = count_maxiters(() -> Zygote.gradient(th -> tv_end(th, sa), theta)[1])
 result["reversediffvjp_zero_tderiv"] = Dict("gradient" => g, "max_rel_err" => relerr(g), "maxiters_warnings" => n,
     "dual_time_calls" => CALLS[])
 foreach(k -> println(k, " ", JSON3.write(result[k])), ("reversediffvjp", "reversediffvjp_zero_tderiv"))

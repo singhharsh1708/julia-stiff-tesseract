@@ -27,6 +27,7 @@ const ST = StiffTesseract
 variant, outfile = ARGS
 const CHANGES = split(variant, "+")
 issubset(CHANGES, ["restart", "single", "nojac", "fdjac", "kencarp4"]) || error("unknown variant $variant")
+("fdjac" in CHANGES && "kencarp4" in CHANGES) && error("fdjac changes Rodas5P; it does not combine with kencarp4")
 
 fields = ["V_blood", "L0"]
 const BASE = ST.human_raw(; scenario = "med_growth", V_blood = 5.0e6)
@@ -58,10 +59,11 @@ for (label, sensealg) in (("enzymevjp", GaussAdjoint(autojacvec = EnzymeVJP())),
         ("reversediffvjp", GaussAdjoint(autojacvec = ReverseDiffVJP(true))))
     r = Dict{String, Any}()
     try
-        t1 = @elapsed (g, n1) = count_maxiters(() -> Zygote.gradient(th -> tv_end(th, sensealg), theta)[1])
-        t2 = @elapsed (_, n2) = count_maxiters(() -> Zygote.gradient(th -> tv_end(th, sensealg), theta))
+        t1 = @elapsed (g, n1, o1) = count_maxiters(() -> Zygote.gradient(th -> tv_end(th, sensealg), theta)[1])
+        t2 = @elapsed (_, n2, o2) = count_maxiters(() -> Zygote.gradient(th -> tv_end(th, sensealg), theta))
         merge!(r, Dict("first_s" => t1, "second_s" => t2, "gradient" => g, "ok" => true,
-            "max_rel_err" => maximum(abs.(g .- ref) ./ abs.(ref)), "maxiters_warnings" => n1 + n2))
+            "max_rel_err" => maximum(abs.(g .- ref) ./ abs.(ref)), "maxiters_warnings" => n1 + n2,
+            "other_warnings" => unique(vcat(o1, o2))))
     catch e
         merge!(r, Dict("ok" => false, "error" => first(sprint(showerror, e), 2000)))
     end

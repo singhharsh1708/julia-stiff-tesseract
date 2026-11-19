@@ -9,7 +9,8 @@
   or `nan`: apply returns NaN when x[1] moves more than 1 %, and `nan_applies` counts how often it did).
 - `enzymevjp-*.json`: `experiments/enzymevjp_probe.jl` (GaussAdjoint, 2 parameters, one 21-day solve). With
   Rodas5P's default ForwardDiff Jacobians, EnzymeVJP is 85 % off and the adjoint solve stops at maxiters (one
-  warning per call); ReverseDiffVJP is right to 7e-8. Without the analytic Jacobian: the same. With
+  warning per call); ReverseDiffVJP is right to 7e-8. Without the analytic Jacobian: the same error (run before
+  the maxiters count was added). With
   `Rodas5P(autodiff = AutoFiniteDiff())`: right to 7e-8, no maxiters, second call 0.05 s (ReverseDiffVJP 0.4 s).
   With KenCarp4 (ForwardDiff Jacobians, no time derivative): right to 1.3e-6, as ReverseDiffVJP (1.4e-6).
   ModelingToolkit and the dose restarts are not involved.
@@ -21,6 +22,6 @@
   derivative zeroed gives EnzymeVJP's wrong gradient to 8 digits, with a maxiters warning (10^6 calls at a Dual
   time). So the zero time derivative stalls the Rosenbrock adjoint and the cut-short gradient is returned with a
   warning only; the λ-Jacobian error is real but does not change this gradient. Robertson (integer powers) and a
-  two-state toy with `u^1.5` showed no error above 5e-7: the stall needs the problem's stiffness and time scales.
+  two-state toy with `u^1.5` showed no gradient error above 5e-7 (scratch runs, not kept; maxiters not checked).
 - Not kept: GaussAdjoint with FBDF gave a near-zero gradient with every VJP backend, including ReverseDiffVJP and
   finite-difference Jacobians; a separate problem (possibly also a stalled adjoint), not followed up.

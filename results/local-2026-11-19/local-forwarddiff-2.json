@@ -1,1 +1,1 @@
-{"nparams":2,"first_s":3.245260333,"route":"forwarddiff","warm_min_s":0.039795875,"load_s":1.915345208,"second_s":0.03966875,"julia":"1.10.12","precompile_s":null,"maxiters_warnings":0,"ok":true,"max_rel_err_vs_forwarddiff":0.0}
+{"nparams":2,"first_s":3.22147375,"route":"forwarddiff","other_warnings":[],"warm_min_s":0.038414,"load_s":2.328833959,"second_s":0.038114917,"julia":"1.10.12","precompile_s":null,"maxiters_warnings":0,"ok":true,"max_rel_err_vs_forwarddiff":0.0}

@@ -54,4 +54,4 @@ jobs:
           source env.sh
           .venv/bin/python pipeline/inprocess.py | tee out.txt
           grep -q "log10 V(26wk)/V0 = -1.302" out.txt
-          grep -q "^vjp first" out.txt
+          grep -q "^vjp first.*6.2832" out.txt

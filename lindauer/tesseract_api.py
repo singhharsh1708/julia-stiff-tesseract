@@ -1,8 +1,8 @@
 """Lindauer et al. 2017 (pembrolizumab PK / PD-1 occupancy / tumour growth) solved in Julia.
 
-The model is QSPAtlas.jl's ModelingToolkit rebuild, generated once into plain Julia (tools/generate.jl), solved
+The model is QSPAtlas.jl's ModelingToolkit rebuild, generated once into plain Julia (../tools/generate.jl), solved
 with Rodas5P with a restart at each Q3W dose (julia/src/StiffTesseract.jl). Derivatives come from forward-mode AD
-through the solver (ForwardDiff), the fastest route measured here up to 16 parameters.
+through the solver (ForwardDiff): the fastest warm route in CI run 1 up to 16 parameters, with no compile wait.
 """
 
 import os

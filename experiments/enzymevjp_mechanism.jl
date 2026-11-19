@@ -14,8 +14,8 @@
 #    finite-difference solver Jacobians both give the right one (enzymevjp_probe.jl).
 # 2. Jacobian in λ: the Dual direction is in λ and y's partials are zero. This is right unless a Dual rule in the
 #    rhs takes a shortcut on zero partials; ForwardDiff's `^(::Dual, ::Real)` (and NaNMath.pow) does, so the terms
-#    with a non-integer power are lost. A real error in the adjoint's Jacobian, but it does not change this
-#    gradient: with the branchless rhs below, or with KenCarp4, the result is the same as without it.
+#    with a non-integer power are lost. A real error in the adjoint's Jacobian, but not the cause here: with
+#    KenCarp4, whose Jacobian still goes through it, the gradient is right.
 #
 # Each check compares with ForwardDiff on the plain rhs. `branchless` is the same rhs with NaNMath.pow(x, y)
 # written as exp(y log x), which removes (2) but not (1).
