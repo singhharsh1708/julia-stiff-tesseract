@@ -1,45 +1,50 @@
 # julia-stiff-tesseract
 
-A stiff pharmacology model in Julia behind a [Tesseract](https://github.com/pasteurlabs/tesseract-core), chained
-with a JAX Tesseract and calibrated with [tesseract-jax](https://github.com/pasteurlabs/tesseract-jax).
+A stiff pharmacology model in Julia served as a [Tesseract](https://github.com/pasteurlabs/tesseract-core),
+differentiated through the solver, chained with a JAX Tesseract and calibrated with
+[tesseract-jax](https://github.com/pasteurlabs/tesseract-jax). What got in the way, and what would make Julia
+Tesseracts easier, is in [docs/findings.md](docs/findings.md).
 
 The model is Lindauer et al. 2017 (pembrolizumab: two-compartment PK, FcRn recycling, PD-1 binding in blood and
 tumour, occupancy-driven tumour growth inhibition) as rebuilt in
-[QSPAtlas.jl](https://github.com/singhharsh1708/QSPAtlas.jl): 11 states in ModelingToolkit, solved with Rodas5P,
-doses every three weeks for 26 weeks. `julia/src/lindauer_model.jl` is QSPAtlas's model file, unchanged (MIT).
-No data from the paper is included.
-
-- [WRITEUP.md](WRITEUP.md): what got in the way, with numbers.
-- [REFLECTION.md](REFLECTION.md): what the first pass did weakly and what the experiments below test.
-- [notes/friction.md](notes/friction.md) and `notes/raw-*.log`: the running log and raw outputs behind the numbers.
+[QSPAtlas.jl](https://github.com/singhharsh1708/QSPAtlas.jl): 11 states, 27 parameters, Rodas5P, a dose every
+three weeks for 26 weeks. `lindauer/julia/src/lindauer_model.jl` is QSPAtlas's ModelingToolkit file, unchanged
+(MIT). `tools/generate.jl` turns it into plain Julia once, so the Tesseract loads OrdinaryDiffEq and ForwardDiff
+but not ModelingToolkit; `tools/test.jl` checks the generated code against ModelingToolkit and QSPAtlas's numbers.
+No data from the paper is stored here; the Figure 4 experiment reads QSPAtlas's digitised values at run time.
 
 ## Layout
 
 | path | what |
 |---|---|
-| `julia/` | Julia project; `src/StiffTesseract.jl` solves the model and gives VJP / JVP by ForwardDiff |
-| `tesseract_api.py`, `tesseract_config.yaml` | the Julia Tesseract (juliacall) |
-| `allometry/` | the JAX Tesseract (mouse-to-human allometric scaling) |
-| `scripts/` | steps 2-6: in-process, `from_source`, calibration, gradient checks, the container |
-| `experiments/` | experiments run in CI (see `.github/workflows/experiments.yml`) |
+| `lindauer/` | the Julia Tesseract (juliacall): `tesseract_api.py`, config, Julia project with the generated model |
+| `allometry/` | a JAX Tesseract: mouse-to-human allometric scaling, the first stage of the chain |
+| `pipeline/` | the Tesseract in-process, via `from_source`, from the built image; the chain calibration; `check_gradients` with injected faults |
+| `experiments/` | the CI experiments: VJP routes, the EnzymeVJP probe, a system image, Figure 4 calibration, `check_gradients` step rules |
+| `tools/` | development environment (ModelingToolkit, SciMLSensitivity, Zygote, Enzyme): code generation and tests |
+| `results/` | raw results per run, each with a README |
+| `docs/` | findings, the reflection that set the experiments, the working log |
 
-## Running locally
+## Running
 
 ```sh
-julia --project=julia -e 'using Pkg; Pkg.instantiate()'
-source scripts_env.sh                     # juliacall uses this Julia and project
-uv venv && uv pip install "tesseract-core[runtime]==1.15.0" juliacall==0.9.37 jax numpy scipy
-.venv/bin/python scripts/step2_inprocess.py
-# steps 4-5 also need tesseract-jax; step 5 uses check_gradients from the unreleased tesseract-jax#300
+julia --project=tools -e 'using Pkg; Pkg.instantiate()'
+julia --project=tools tools/test.jl                 # generated model vs ModelingToolkit and QSPAtlas
+
+julia --project=lindauer/julia -e 'using Pkg; Pkg.instantiate()'
+source env.sh                                       # juliacall uses this Julia and lindauer/julia
+uv venv && uv pip install "tesseract-core[runtime]==1.15.0" juliacall==0.9.37 numpy jax scipy
+.venv/bin/python pipeline/inprocess.py
+
+tesseract build lindauer                            # the image (about 5 GB)
 ```
 
-## Experiments in CI
+`pipeline/check_gradients_faults.py` and `experiments/gradcheck_grid.py` need `check_gradients` from the
+unreleased tesseract-jax#300; `.github/workflows/experiments.yml` installs it from a pinned commit.
 
-1. **VJP routes** at 2, 8 and 16 parameters: ForwardDiff through the solve; Zygote with SciMLSensitivity's
-   adjoints (GaussAdjoint with automatic backends, with EnzymeVJP and with ReverseDiffVJP; InterpolatingAdjoint
-   with EnzymeVJP); and the Enzyme call used by tesseract-core's Julia template (branch `jpb/julia`). First call,
-   warm call, and agreement with ForwardDiff, one process per route and size.
-2. **First-call latency**: a custom system image (PackageCompiler) built from what a Python-driven call
-   compiles, loaded through juliacall, against no system image.
+## CI
 
-Results are in each run's summary and artifacts.
+- `test.yml`, every push: the Julia tests, a check that the committed generated code is current, and the
+  Tesseract through juliacall.
+- `experiments.yml`, on demand and when the code it runs changes: each experiment in its own job, then a summary table in the run summary.
+  Saved runs are in `results/`.

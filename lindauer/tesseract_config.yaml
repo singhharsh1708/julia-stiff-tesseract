@@ -1,0 +1,30 @@
+name: "lindauer-julia"
+version: "0.2.0"
+description: |
+  Lindauer et al. 2017 pembrolizumab PK / PD-1 occupancy / tumour growth model (QSPAtlas.jl rebuild), solved in
+  Julia with Rodas5P from code generated once from the ModelingToolkit model; derivatives by forward-mode AD
+  (ForwardDiff) through the stiff solver.
+
+# juliacall uses the image's Julia and this project, and skips its own package management.
+env:
+  PYTHON_JULIACALL_EXE: "/usr/local/julia/bin/julia"
+  PYTHON_JULIACALL_PROJECT: "/tesseract/julia"
+  PYTHON_JULIAPKG_OFFLINE: "yes"
+  JULIA_DEPOT_PATH: "/tesseract/.julia"
+  JULIA_PKG_PRECOMPILE_AUTO: "0"
+
+build_config:
+  base_image: "julia:1.10-bookworm"
+  package_data:
+    - ["julia/Project.toml", "julia/Project.toml"]
+    - ["julia/Manifest.toml", "julia/Manifest.toml"]
+    - ["julia/src/StiffTesseract.jl", "julia/src/StiffTesseract.jl"]
+    - ["julia/src/generated/lindauer_params.jl", "julia/src/generated/lindauer_params.jl"]
+    - ["julia/src/generated/lindauer_rhs.jl", "julia/src/generated/lindauer_rhs.jl"]
+  custom_build_steps:
+    # Install and precompile the Julia environment into a depot any runtime user can read and write
+    # (the layout of tesseract-core's Julia template on jpb/julia).
+    - |
+      RUN mkdir -p /tesseract/.julia && JULIA_DEPOT_PATH=/tesseract/.julia \
+          julia --project=/tesseract/julia -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()' && \
+          chmod -R 777 /tesseract/.julia /tesseract/julia

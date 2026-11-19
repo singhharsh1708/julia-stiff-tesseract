@@ -1,0 +1,56 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  JULIA_VERSION: "1.10.12"
+
+jobs:
+  julia:
+    name: model, generated code and derivatives
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ env.JULIA_VERSION }}
+      - uses: julia-actions/cache@v2
+      - name: Instantiate
+        run: julia --project=tools -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
+      - name: Tests
+        run: julia --project=tools tools/test.jl
+      - name: Generated code is up to date
+        run: |
+          norm() { sed -E 's/ₛᵧₘ[0-9]+//g' "$1"; }
+          for f in lindauer_params.jl lindauer_rhs.jl; do norm lindauer/julia/src/generated/$f > /tmp/committed-$f; done
+          julia --project=tools tools/generate.jl
+          for f in lindauer_params.jl lindauer_rhs.jl; do
+            norm lindauer/julia/src/generated/$f | diff -q /tmp/committed-$f - || { echo "$f is stale: run tools/generate.jl"; exit 1; }
+          done
+
+  tesseract:
+    name: the Tesseract through juliacall
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ env.JULIA_VERSION }}
+      - uses: julia-actions/cache@v2
+      - uses: astral-sh/setup-uv@v6
+      - name: Environments
+        run: |
+          julia --project=lindauer/julia -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
+          uv venv --python 3.12 .venv
+          uv pip install --python .venv/bin/python "tesseract-core[runtime]==1.15.0" juliacall==0.9.37 numpy
+      - name: Apply and VJP in-process
+        run: |
+          source env.sh
+          .venv/bin/python pipeline/inprocess.py | tee out.txt
+          grep -q "log10 V(26wk)/V0 = -1.302" out.txt

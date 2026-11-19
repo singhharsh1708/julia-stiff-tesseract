@@ -17,7 +17,7 @@ import numpy as np
 t0 = time.perf_counter()
 from tesseract_core import Tesseract  # noqa: E402
 
-tess = Tesseract.from_tesseract_api("tesseract_api.py")
+tess = Tesseract.from_tesseract_api("lindauer/tesseract_api.py")
 t_load = time.perf_counter() - t0
 
 inputs = {

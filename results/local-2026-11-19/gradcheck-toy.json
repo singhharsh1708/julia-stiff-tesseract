@@ -1,0 +1,220 @@
+{
+ "rms": {
+  "none": {
+   "passed": false,
+   "rows": [
+    "pipeline 1.39e+12 1.39e+12 6.22e-04 1e-01 ok",
+    "#1 x -> y 5.32e+10 5.39e+10 1.40e-02 1e-01 FAIL",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+  },
+  "0": {
+   "passed": false,
+   "rows": [
+    "pipeline 1.39e+12 1.39e+12 6.22e-04 1e-01 ok",
+    "#1 x -> y 5.32e+10 5.39e+10 1.40e-02 1e-01 FAIL",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+  },
+  "1": {
+   "passed": false,
+   "rows": [
+    "pipeline 2.08e+12 1.39e+12 3.34e-01 1e-01 FAIL",
+    "#1 x -> y 8.01e+10 5.39e+10 3.27e-01 1e-01 FAIL",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+  },
+  "2": {
+   "passed": false,
+   "rows": [
+    "pipeline 1.39e+12 1.39e+12 6.23e-04 1e-01 ok",
+    "#1 x -> y 5.32e+10 5.39e+10 1.40e-02 1e-01 FAIL",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+  },
+  "3": {
+   "passed": false,
+   "rows": [
+    "pipeline 1.39e+12 1.39e+12 9.33e-04 1e-01 ok",
+    "#1 x -> y 5.28e+10 5.39e+10 2.11e-02 1e-01 FAIL",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+  },
+  "nan": {
+   "passed": false,
+   "rows": [
+    "pipeline 1.39e+12 nan inf 1e-01 FAIL (finite difference too uncertain)",
+    "#1 x -> y 5.32e+10 nan inf 1e-01 FAIL (finite difference too uncertain)",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. Its finite difference is too uncertain to be sure, as with a noisy output or in float32, so the gradient may still be right; check at another point too."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. Its finite difference is too uncertain to be sure, as with a noisy output or in float32, so the gradient may still be right; check at another point too."
+  }
+ },
+ "elementwise": {
+  "none": {
+   "passed": true,
+   "rows": [
+    "pipeline 1.42e+00 1.42e+00 3.09e-07 1e-03 ok",
+    "#1 x -> y -4.84e-01 -4.84e-01 1.35e-07 1e-03 ok"
+   ],
+   "verdict": "Gradients agree."
+  },
+  "0": {
+   "passed": false,
+   "rows": [
+    "pipeline 9.25e-01 1.42e+00 3.50e-01 1e-03 FAIL",
+    "#1 x -> y -5.09e-01 -4.84e-01 5.02e-02 1e-03 FAIL",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+  },
+  "1": {
+   "passed": false,
+   "rows": [
+    "pipeline 2.35e+00 1.42e+00 3.93e-01 1e-03 FAIL",
+    "#1 x -> y -4.48e-01 -4.84e-01 7.43e-02 1e-03 FAIL",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+  },
+  "2": {
+   "passed": true,
+   "rows": [
+    "pipeline 1.42e+00 1.42e+00 3.09e-07 1e-03 ok",
+    "#1 x -> y -4.84e-01 -4.84e-01 1.35e-07 1e-03 ok"
+   ],
+   "verdict": "Gradients agree."
+  },
+  "3": {
+   "passed": false,
+   "rows": [
+    "pipeline 1.71e+00 1.42e+00 1.68e-01 1e-03 FAIL",
+    "#1 x -> y -7.36e-01 -4.84e-01 3.43e-01 1e-03 FAIL",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+  },
+  "nan": {
+   "passed": true,
+   "rows": [
+    "pipeline 1.42e+00 1.42e+00 3.09e-07 1e-03 ok",
+    "#1 x -> y -4.84e-01 -4.84e-01 1.35e-07 1e-03 ok"
+   ],
+   "verdict": "Gradients agree."
+  }
+ },
+ "floor": {
+  "none": {
+   "passed": false,
+   "rows": [
+    "pipeline 1.39e+09 1.39e+09 6.22e-04 1e-01 ok",
+    "#1 x -> y 5.32e+07 5.39e+07 1.40e-02 1e-01 FAIL",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+  },
+  "0": {
+   "passed": false,
+   "rows": [
+    "pipeline 1.39e+09 1.39e+09 6.22e-04 1e-01 ok",
+    "#1 x -> y 5.32e+07 5.39e+07 1.40e-02 1e-01 FAIL",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+  },
+  "1": {
+   "passed": false,
+   "rows": [
+    "pipeline 2.08e+09 1.39e+09 3.34e-01 1e-01 FAIL",
+    "#1 x -> y 8.01e+07 5.39e+07 3.27e-01 1e-01 FAIL",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+  },
+  "2": {
+   "passed": false,
+   "rows": [
+    "pipeline 1.39e+09 1.39e+09 6.23e-04 1e-01 ok",
+    "#1 x -> y 5.32e+07 5.39e+07 1.40e-02 1e-01 FAIL",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+  },
+  "3": {
+   "passed": false,
+   "rows": [
+    "pipeline 1.39e+09 1.39e+09 9.33e-04 1e-01 ok",
+    "#1 x -> y 5.28e+07 5.39e+07 2.11e-02 1e-01 FAIL",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+  },
+  "nan": {
+   "passed": false,
+   "rows": [
+    "pipeline 1.39e+09 nan inf 1e-01 FAIL (finite difference too uncertain)",
+    "#1 x -> y 5.32e+07 nan inf 1e-01 FAIL (finite difference too uncertain)",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. Its finite difference is too uncertain to be sure, as with a noisy output or in float32, so the gradient may still be right; check at another point too."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. Its finite difference is too uncertain to be sure, as with a noisy output or in float32, so the gradient may still be right; check at another point too."
+  }
+ },
+ "user_scale": {
+  "none": {
+   "passed": true,
+   "rows": [
+    "pipeline 2.69e+00 2.69e+00 4.50e-08 1e-03 ok",
+    "#1 x -> y 1.26e+00 1.26e+00 5.54e-08 1e-03 ok"
+   ],
+   "verdict": "Gradients agree."
+  },
+  "0": {
+   "passed": false,
+   "rows": [
+    "pipeline 2.52e+00 2.69e+00 6.18e-02 1e-03 FAIL",
+    "#1 x -> y 1.25e+00 1.26e+00 6.78e-03 1e-03 ok"
+   ],
+   "verdict": "No Tesseract call fails, but the pipeline does, by less than ten times the error of #1 x -> y, so this check cannot tell whether that Tesseract or the JAX code between the Tesseracts is wrong. Rerun with a smaller rtol to tell."
+  },
+  "1": {
+   "passed": false,
+   "rows": [
+    "pipeline 3.15e+00 2.69e+00 1.47e-01 1e-03 FAIL",
+    "#1 x -> y 1.27e+00 1.26e+00 1.41e-02 1e-03 FAIL",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+  },
+  "2": {
+   "passed": false,
+   "rows": [
+    "pipeline 3.45e+00 2.69e+00 2.21e-01 1e-03 FAIL",
+    "#1 x -> y 2.13e+00 1.26e+00 4.09e-01 1e-03 FAIL",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+  },
+  "3": {
+   "passed": false,
+   "rows": [
+    "pipeline 2.98e+00 2.69e+00 9.66e-02 1e-03 FAIL",
+    "#1 x -> y 1.00e+00 1.26e+00 2.01e-01 1e-03 FAIL",
+    "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+   ],
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+  },
+  "nan": {
+   "passed": true,
+   "rows": [
+    "pipeline 2.69e+00 2.69e+00 4.50e-08 1e-03 ok",
+    "#1 x -> y 1.26e+00 1.26e+00 5.54e-08 1e-03 ok"
+   ],
+   "verdict": "Gradients agree."
+  }
+ }
+}

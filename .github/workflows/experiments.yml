@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ["experiments/**", "julia/**", "tesseract_api.py", ".github/workflows/experiments.yml"]
+    paths: ["experiments/**", "lindauer/**", "pipeline/**", "tools/**", ".github/workflows/experiments.yml"]
 
 concurrency:
   group: experiments-${{ github.ref }}
@@ -12,16 +12,18 @@ concurrency:
 
 env:
   JULIA_VERSION: "1.10.12"
+  # tesseract-jax#300 (check_gradients), pushed head; the experiments patch its step rule, the PR is unchanged
+  TESSERACT_JAX: "tesseract-jax @ git+https://github.com/singhharsh1708/tesseract-jax@14248ad904b11916244e9161de07c744d94fb420"
 
 jobs:
   routes:
-    name: "derivative route: ${{ matrix.route }}, ${{ matrix.nparams }} params"
+    name: "VJP route: ${{ matrix.route }}, ${{ matrix.nparams }} params"
     runs-on: ubuntu-latest
-    timeout-minutes: 150
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix:
-        route: [forwarddiff, enzyme, adjoint-default, adjoint-gauss-enzyme, adjoint-gauss-reversediff, adjoint-interp-enzyme]
+        route: [forwarddiff, enzyme, adjoint-gauss-enzyme, adjoint-gauss-reversediff, adjoint-interp-enzyme]
         nparams: [2, 8, 16]
     steps:
       - uses: actions/checkout@v4
@@ -32,25 +34,112 @@ jobs:
       - name: Instantiate and precompile
         run: |
           start=$(date +%s)
-          julia --project=julia -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
+          julia --project=tools -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
           echo "precompile_s=$(( $(date +%s) - start ))" >> "$GITHUB_ENV"
       - name: Run
         run: |
-          mkdir -p results
-          julia --project=julia experiments/routes.jl ${{ matrix.route }} ${{ matrix.nparams }} \
-            results/route-${{ matrix.route }}-${{ matrix.nparams }}.json
+          mkdir -p out
+          julia --project=tools experiments/routes.jl ${{ matrix.route }} ${{ matrix.nparams }} \
+            out/route-${{ matrix.route }}-${{ matrix.nparams }}.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: route-${{ matrix.route }}-${{ matrix.nparams }}
-          path: results/
+          path: out/
 
-  sysimage:
-    name: "first-call latency: system image through juliacall"
+  enzymevjp:
+    name: "EnzymeVJP probe: ${{ matrix.variant }}"
     runs-on: ubuntu-latest
     timeout-minutes: 150
-    env:
-      PYTHON_JULIACALL_PROJECT: ${{ github.workspace }}/julia
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [restart, single, nojac, fdjac]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ env.JULIA_VERSION }}
+      - uses: julia-actions/cache@v2
+      - run: julia --project=tools -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
+      - name: Run
+        run: |
+          mkdir -p out
+          julia --project=tools experiments/enzymevjp_probe.jl ${{ matrix.variant }} out/enzymevjp-${{ matrix.variant }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: enzymevjp-${{ matrix.variant }}
+          path: out/
+
+  sysimage:
+    name: "first call: system image through juliacall"
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - name: More swap (the image build can need more than the runner's 16 GB)
+        run: |
+          sudo swapoff -a || true
+          sudo fallocate -l 16G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2
+          free -g
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ env.JULIA_VERSION }}
+      - uses: julia-actions/cache@v2
+      - uses: astral-sh/setup-uv@v6
+      - name: Environments
+        run: |
+          julia --project=lindauer/julia -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
+          julia --project=experiments/sysimage -e 'using Pkg; Pkg.instantiate()'
+          uv venv --python 3.12 .venv
+          uv pip install --python .venv/bin/python "tesseract-core[runtime]==1.15.0" juliacall==0.9.37 numpy
+      - name: Baseline, trace, build, with image
+        run: |
+          source env.sh
+          mkdir -p out
+          .venv/bin/python experiments/sysimage/workload.py out/sysimage-baseline-1.json
+          .venv/bin/python experiments/sysimage/workload.py out/sysimage-baseline-2.json
+          PYTHON_JULIACALL_TRACE_COMPILE="$PWD/out/traces.jl" .venv/bin/python experiments/sysimage/workload.py out/sysimage-traced.json
+          start=$(date +%s)
+          /usr/bin/time -v julia --project=experiments/sysimage experiments/sysimage/build.jl out/traces.jl "$PWD/sys.so" 2> out/build-time.txt
+          echo "{\"build_s\": $(( $(date +%s) - start )), \"size_bytes\": $(stat -c %s sys.so), \"max_rss_kb\": $(grep 'Maximum resident' out/build-time.txt | awk '{print $NF}')}" > out/sysimage-build.json
+          PYTHON_JULIACALL_SYSIMAGE="$PWD/sys.so" .venv/bin/python experiments/sysimage/workload.py out/sysimage-with-1.json
+          PYTHON_JULIACALL_SYSIMAGE="$PWD/sys.so" .venv/bin/python experiments/sysimage/workload.py out/sysimage-with-2.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sysimage
+          path: out/
+
+  container:
+    name: "container: tesseract build and from_image"
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Build
+        run: |
+          uv venv --python 3.12 .venv
+          uv pip install --python .venv/bin/python "tesseract-core==1.15.0" numpy
+          mkdir -p out
+          start=$(date +%s)
+          .venv/bin/tesseract build lindauer --tag ci
+          size=$(docker image inspect lindauer-julia:ci --format '{{.Size}}')
+          echo "{\"build_s\": $(( $(date +%s) - start )), \"size_bytes\": $size}" > out/container-build.json
+      - name: Start and call
+        run: .venv/bin/python pipeline/container.py lindauer-julia:ci out/container-run.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: container
+          path: out/
+
+  fig4:
+    name: "calibration to the paper's Figure 4"
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
@@ -58,45 +147,55 @@ jobs:
           version: ${{ env.JULIA_VERSION }}
       - uses: julia-actions/cache@v2
       - uses: astral-sh/setup-uv@v6
-      - name: Python environment
+      - name: Environments
         run: |
+          julia --project=lindauer/julia -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
           uv venv --python 3.12 .venv
-          uv pip install --python .venv/bin/python "tesseract-core[runtime]==1.15.0" juliacall==0.9.37 numpy
-      - name: Instantiate and precompile
+          uv pip install --python .venv/bin/python "tesseract-core[runtime]==1.15.0" juliacall==0.9.37 numpy scipy jax "$TESSERACT_JAX"
+      - name: Calibrate
         run: |
-          julia --project=julia -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
-          julia --project=experiments/sysimage -e 'using Pkg; Pkg.instantiate()'
-      - name: Baseline (no system image), twice
-        run: |
-          export PYTHON_JULIACALL_EXE="$(julia -e 'print(joinpath(Sys.BINDIR, "julia"))')"
-          mkdir -p results
-          .venv/bin/python experiments/sysimage/workload.py results/sysimage-baseline-1.json
-          .venv/bin/python experiments/sysimage/workload.py results/sysimage-baseline-2.json
-      - name: Trace what the workload compiles
-        run: |
-          export PYTHON_JULIACALL_EXE="$(julia -e 'print(joinpath(Sys.BINDIR, "julia"))')"
-          PYTHON_JULIACALL_TRACE_COMPILE="$PWD/results/traces.jl" \
-            .venv/bin/python experiments/sysimage/workload.py results/sysimage-traced.json
-          wc -l results/traces.jl
-      - name: Build the system image
-        run: |
-          start=$(date +%s)
-          julia --project=experiments/sysimage experiments/sysimage/build.jl results/traces.jl "$PWD/sys.so"
-          echo "{\"build_s\": $(( $(date +%s) - start )), \"size_bytes\": $(stat -c %s sys.so)}" > results/sysimage-build.json
-      - name: With the system image, twice
-        run: |
-          export PYTHON_JULIACALL_EXE="$(julia -e 'print(joinpath(Sys.BINDIR, "julia"))')"
-          export PYTHON_JULIACALL_SYSIMAGE="$PWD/sys.so"
-          .venv/bin/python experiments/sysimage/workload.py results/sysimage-with-1.json
-          .venv/bin/python experiments/sysimage/workload.py results/sysimage-with-2.json
+          source env.sh
+          mkdir -p out
+          .venv/bin/python experiments/fig4_calibration.py out/fig4.json | tee out/fig4.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: sysimage
-          path: results/
+          name: fig4
+          path: out/
+
+  gradcheck:
+    name: "check_gradients step rules: ${{ matrix.case }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        case: [toy, chain]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ env.JULIA_VERSION }}
+      - uses: julia-actions/cache@v2
+      - uses: astral-sh/setup-uv@v6
+      - name: Environments
+        run: |
+          julia --project=lindauer/julia -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
+          uv venv --python 3.12 .venv
+          uv pip install --python .venv/bin/python "tesseract-core[runtime]==1.15.0" juliacall==0.9.37 numpy jax "$TESSERACT_JAX"
+      - name: Run
+        run: |
+          source env.sh
+          mkdir -p out
+          .venv/bin/python experiments/gradcheck_grid.py ${{ matrix.case }} out/gradcheck-${{ matrix.case }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gradcheck-${{ matrix.case }}
+          path: out/
 
   summary:
-    needs: [routes, sysimage]
+    needs: [routes, enzymevjp, sysimage, container, fig4, gradcheck]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -105,8 +204,8 @@ jobs:
         with:
           path: artifacts
       - name: Summarise
-        run: python3 experiments/summarise.py artifacts >> "$GITHUB_STEP_SUMMARY"
+        run: python3 experiments/summarise.py artifacts | tee summary.md >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
           name: summary
-          path: artifacts/
+          path: summary.md
