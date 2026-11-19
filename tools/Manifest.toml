@@ -2,7 +2,7 @@
 
 julia_version = "1.10.12"
 manifest_format = "2.0"
-project_hash = "6cb5e245533ec3b08b9e8d371f85cb8badcd9e97"
+project_hash = "194a226a33d07fb0b6fb5153e432b089218f3a7e"
 
 [[deps.ADTypes]]
 deps = ["PrecompileTools"]
@@ -2151,7 +2151,7 @@ weakdeps = ["ChainRulesCore", "InverseFunctions"]
     InverseFunctionsExt = "InverseFunctions"
 
 [[deps.StiffTesseract]]
-deps = ["Enzyme", "ForwardDiff", "JSON3", "ModelingToolkit", "NaNMath", "OpenSSL_jll", "OrdinaryDiffEq", "PythonCall", "SciMLSensitivity", "SciMLStructures", "SymbolicIndexingInterface", "Test", "Zygote"]
+deps = ["ForwardDiff", "NaNMath", "OpenSSL_jll", "OrdinaryDiffEq", "PythonCall"]
 path = "../lindauer/julia"
 uuid = "6b2a7c1e-4f3d-4c8e-9a51-2d7e8b0c3f11"
 version = "0.1.0"

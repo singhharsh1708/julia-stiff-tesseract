@@ -46,7 +46,7 @@ wall times are upper bounds. Packages were already downloaded in ~/.julia (no ne
   on first call); warm apply 23 ms, warm VJP 69 ms. So a fresh process needs about 22 s before its first
   gradient, and in-process results match pure Julia (log10 ratio -1.302).
 - Of the ~12 s first apply in a fresh process, about 3 s is Julia compiling the model (template 1.8 s + first
-  simulate 1.5 s in a fresh Julia; 3.3 s in raw-spike.log) and the rest is juliacall/PythonCall compiling the
+  simulate 1.5 s in a fresh Julia; 3.3 s in results/local-2026-11-18/raw-spike.log) and the rest is juliacall/PythonCall compiling the
   conversions; the first VJP (~3.5 s) is mostly the model's ForwardDiff compile (first Jacobian 3.1 s).
 
 ## Julia-side breakage met on the way (not Tesseract's, but a Julia user wrapping a model will meet it)
@@ -151,5 +151,5 @@ OrdinaryDiffEqRosenbrock 2.7.5, LinearSolve 5.18.3, ModelingToolkit 11.46.1, Sci
   sets JULIA_PKG_PRECOMPILE_AUTO=0 and a shared depot.
 - Correction: with `using SciMLSensitivity`, Enzyme reverse mode works through the solve
   (DiffEqBase's Enzyme rule hands it to SciMLSensitivity's adjoint). enzyme_sens_timing.jl: first call 494.9 s,
-  second 1.65 s, at a new point 1.62 s; VJP agrees with ForwardDiff to 6.4e-10 (raw-enzyme-sens.log, load ~11-16).
+  second 1.65 s, at a new point 1.62 s; VJP agrees with ForwardDiff to 6.4e-10 (results/local-2026-11-18/raw-enzyme-sens.log, load ~11-16).
   The MixedReturnException above is what happens without SciMLSensitivity loaded.

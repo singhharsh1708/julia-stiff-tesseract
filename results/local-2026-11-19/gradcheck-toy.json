@@ -52,7 +52,8 @@
     "#1 x -> y 5.32e+10 nan inf 1e-01 FAIL (finite difference too uncertain)",
     "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. Its finite difference is too uncertain to be sure, as with a noisy output or in float32, so the gradient may still be right; check at another point too."
    ],
-   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. Its finite difference is too uncertain to be sure, as with a noisy output or in float32, so the gradient may still be right; check at another point too."
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. Its finite difference is too uncertain to be sure, as with a noisy output or in float32, so the gradient may still be right; check at another point too.",
+   "nan_applies": 16
   }
  },
  "elementwise": {
@@ -105,7 +106,8 @@
     "pipeline 1.42e+00 1.42e+00 3.09e-07 1e-03 ok",
     "#1 x -> y -4.84e-01 -4.84e-01 1.35e-07 1e-03 ok"
    ],
-   "verdict": "Gradients agree."
+   "verdict": "Gradients agree.",
+   "nan_applies": 4
   }
  },
  "floor": {
@@ -161,7 +163,8 @@
     "#1 x -> y 5.32e+07 nan inf 1e-01 FAIL (finite difference too uncertain)",
     "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. Its finite difference is too uncertain to be sure, as with a noisy output or in float32, so the gradient may still be right; check at another point too."
    ],
-   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. Its finite difference is too uncertain to be sure, as with a noisy output or in float32, so the gradient may still be right; check at another point too."
+   "verdict": "#1 x -> y disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. Its finite difference is too uncertain to be sure, as with a noisy output or in float32, so the gradient may still be right; check at another point too.",
+   "nan_applies": 16
   }
  },
  "user_scale": {
@@ -214,7 +217,8 @@
     "pipeline 2.69e+00 2.69e+00 4.50e-08 1e-03 ok",
     "#1 x -> y 1.26e+00 1.26e+00 5.54e-08 1e-03 ok"
    ],
-   "verdict": "Gradients agree."
+   "verdict": "Gradients agree.",
+   "nan_applies": 4
   }
  }
 }

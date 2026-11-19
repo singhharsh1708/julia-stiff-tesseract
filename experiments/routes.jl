@@ -14,6 +14,8 @@
 # One route and size per process, so the first call measures compilation. The ForwardDiff reference is
 # computed after the timings, so it cannot warm up the route being timed.
 
+# before the packages: code Enzyme compiles calls the logger in the world it was loaded in
+include("maxiters.jl")
 t_load = @elapsed begin
     using StiffTesseract, LinearAlgebra, ForwardDiff, JSON3
     const ST = StiffTesseract
@@ -79,11 +81,15 @@ end
 result = Dict{String, Any}("route" => route, "nparams" => nparams, "load_s" => t_load, "julia" => string(VERSION),
     "precompile_s" => tryparse(Int, get(ENV, "precompile_s", "")))
 try
-    t1 = @elapsed g1 = vjp()
-    t2 = @elapsed vjp()
-    t3 = minimum(@elapsed(vjp()) for _ in 1:2)
+    t1 = @elapsed (g1, n1) = count_maxiters(vjp)
+    result["maxiters_warnings"] = n1
+    if t1 < 300   # a route that takes minutes per call gets one call, so the job ends inside its time limit
+        t2 = @elapsed vjp()
+        t3 = minimum(@elapsed(vjp()) for _ in 1:2)
+        merge!(result, Dict("second_s" => t2, "warm_min_s" => t3))
+    end
     ref = ST.jacobian(theta, fields, "med_growth", 5.0, 21.0, ts)' * ct
-    merge!(result, Dict("first_s" => t1, "second_s" => t2, "warm_min_s" => t3, "ok" => true,
+    merge!(result, Dict("first_s" => t1, "ok" => true,
         "max_rel_err_vs_forwarddiff" => maximum(abs.(g1 .- ref) ./ max.(abs.(ref), 1e-300))))
 catch e
     merge!(result, Dict("ok" => false, "error" => first(sprint(showerror, e), 2000)))

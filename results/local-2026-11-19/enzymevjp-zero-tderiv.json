@@ -1,0 +1,1 @@
+{"reversediffvjp":{"maxiters_warnings":0,"gradient":[2.3688688796503898e-6,586302.3969453902],"max_rel_err":7.439867282289459e-8},"reversediffvjp_zero_tderiv":{"maxiters_warnings":1,"gradient":[3.614602269184198e-7,277724.01821391017],"max_rel_err":0.8474123227624127,"dual_time_calls":1000000},"forwarddiff":[2.3688690558911036e-6,586302.3969336358]}

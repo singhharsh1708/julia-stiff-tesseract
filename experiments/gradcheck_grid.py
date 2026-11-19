@@ -16,8 +16,10 @@ chain: the allometry (JAX) -> Lindauer (Julia, from_source) chain with the four 
 
 import json
 import os
+import re
 import subprocess
 import sys
+import tempfile
 
 import numpy as np
 
@@ -73,11 +75,17 @@ def toy(rule):
     for case in ["none", "0", "1", "2", "3", "nan"]:
         os.environ.pop("TOY_FAULT", None)
         os.environ.pop("TOY_NAN", None)
+        nan_log = None
         if case == "nan":
-            os.environ["TOY_NAN"] = "1"
+            nan_log = tempfile.NamedTemporaryFile(suffix=".log", delete=False).name
+            os.environ["TOY_NAN"] = nan_log
         elif case != "none":
             os.environ["TOY_FAULT"] = case
         out[case] = row_summary(check_gradients(loss, params))
+        if nan_log:  # how many applies returned NaN: zero would mean this case tested nothing
+            with open(nan_log) as f:
+                out[case]["nan_applies"] = len(f.readlines())
+            os.remove(nan_log)
     return out
 
 
@@ -86,8 +94,11 @@ def chain(rule):
     for fault in ["clean", "lindauer_vjp", "allometry_vjp", "glue"]:
         r = subprocess.run([sys.executable, "pipeline/check_gradients_faults.py", fault, "--rule", rule],
                            capture_output=True, text=True, timeout=3600)
-        tail = r.stdout.strip().splitlines()
-        out[fault] = {"returncode": r.returncode, "report": tail[-12:], "stderr": r.stderr[-600:] if r.returncode else ""}
+        m = re.search(r"^=== fault: .*passed: (True|False)$", r.stdout, re.MULTILINE)
+        report = r.stdout[m.start():].strip().splitlines() if m else []
+        out[fault] = {"returncode": r.returncode, "report": report, "stderr": r.stderr[-600:] if r.returncode else ""}
+        if m:
+            out[fault]["passed"] = m.group(1) == "True"
     return out
 
 

@@ -35,7 +35,7 @@ System image job: baseline (3 runs, no image): load ~12 s, first apply ~31 s, wa
    call). Its cost grows with parameters (0.075 -> 0.29 s); GaussAdjoint + ReverseDiffVJP stays ~0.4-0.8 s, so the
    crossover is roughly 25-30 parameters.
 2. The jpb/julia template's Enzyme route is accurate (1e-9) but compiles 5-8 min per process, then 1.3-1.6 s.
-3. Every SciMLSensitivity adjoint with EnzymeVJP (including the default) is wrong here (2 % to 55 %, growing with
+3. Every SciMLSensitivity adjoint with EnzymeVJP (including the default) is wrong here (0.15 % to 55 %, growing with
    parameters) and takes 7-25 min per call; the same GaussAdjoint with ReverseDiffVJP is accurate to 1e-7. Needs a
    minimal reproducer (with and without ModelingToolkit) before reporting anywhere.
 4. CI is slower than the Mac: fresh process 12 s load, 31 s first apply, 12 s first VJP.

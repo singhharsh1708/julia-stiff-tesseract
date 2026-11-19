@@ -23,22 +23,22 @@ def s(x, unit=" s"):
 
 
 print("## VJP routes (generated model)\n")
-print("| route | params | first call | warm (min of 2) | max rel. err vs ForwardDiff | note |")
-print("|---|---|---|---|---|---|")
+print("| route | params | first call | warm (min of 2) | max rel. err vs ForwardDiff | maxiters warnings | note |")
+print("|---|---|---|---|---|---|---|")
 routes = {(r["route"], r["nparams"]): r for _, r in load("**/route-*.json")}
 for rt in ROUTES:
     for n in (2, 8, 16):
         r = routes.get((rt, n))
         if r is None:
-            print(f"| {rt} | {n} | - | - | - | no result |")
+            print(f"| {rt} | {n} | - | - | - | - | no result |")
             continue
         note = "" if r.get("ok") else r.get("error", "")[:100].replace("|", "/").replace("\n", " ")
         print(f"| {rt} | {n} | {s(r.get('first_s'))} | {s(r.get('warm_min_s'))} | "
-              f"{s(r.get('max_rel_err_vs_forwarddiff'), '')} | {note} |")
+              f"{s(r.get('max_rel_err_vs_forwarddiff'), '')} | {r.get('maxiters_warnings', '-')} | {note} |")
 
 print("\n## Where EnzymeVJP goes wrong (GaussAdjoint, 2 parameters, vs ForwardDiff on the same function)\n")
-print("| variant | EnzymeVJP first / second | EnzymeVJP max rel. err | ReverseDiffVJP first / second | ReverseDiffVJP max rel. err |")
-print("|---|---|---|---|---|")
+print("| variant | EnzymeVJP first / second | EnzymeVJP max rel. err | maxiters | ReverseDiffVJP first / second | ReverseDiffVJP max rel. err | maxiters |")
+print("|---|---|---|---|---|---|---|")
 for _, r in load("**/enzymevjp-*.json"):
     if "variant" not in r:
         continue
@@ -46,11 +46,15 @@ for _, r in load("**/enzymevjp-*.json"):
     for k in ("enzymevjp", "reversediffvjp"):
         v = r.get(k, {})
         if v.get("ok"):
-            cells += [f"{s(v['first_s'])} / {s(v['second_s'])}", s(v["max_rel_err"], "")]
+            cells += [f"{s(v['first_s'])} / {s(v['second_s'])}", s(v["max_rel_err"], ""), str(v.get("maxiters_warnings", "-"))]
         else:
-            cells += ["failed: " + v.get("error", "no result")[:80].replace("|", "/").replace("\n", " "), "-"]
+            cells += ["failed: " + v.get("error", "no result")[:80].replace("|", "/").replace("\n", " "), "-", "-"]
     print(f"| {r['variant']} | " + " | ".join(cells) + " |")
 
+for _, r in load("**/enzymevjp-zero-tderiv.json"):
+    a, b = r["reversediffvjp"], r["reversediffvjp_zero_tderiv"]
+    print(f"\nReverseDiffVJP as is: max rel. err {a['max_rel_err']:.2g}, {a['maxiters_warnings']} maxiters warnings; "
+          f"with the time derivative zeroed as EnzymeVJP has it: {b['max_rel_err']:.8g}, {b['maxiters_warnings']} maxiters warnings")
 for _, r in load("**/enzymevjp-mechanism.json"):
     print("\nComponent checks (max rel. error at t = 1, 24, 240 h): " + "; ".join(
         f"{rhs} {k} {[float(f'{x:.2g}') for x in v]}" for rhs in ("generated", "branchless") for k, v in r[rhs].items()))
@@ -88,7 +92,8 @@ for p, r in load("**/gradcheck-*.json"):
         cells = []
         for case, v in cases.items():
             if "passed" in v:
-                cells.append(f"{case}: {'agree' if v['passed'] else 'flagged'}")
+                nan = f" ({v['nan_applies']} NaN applies)" if "nan_applies" in v else ""
+                cells.append(f"{case}: {'agree' if v['passed'] else 'flagged'}{nan}")
             else:
                 cells.append(f"{case}: {'ok' if v.get('returncode') == 0 else 'error'}")
         print(f"- {rule}: " + "; ".join(cells))

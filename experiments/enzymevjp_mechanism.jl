@@ -6,11 +6,16 @@
 # derivative with ForwardDiff, so SciMLSensitivity calls Enzyme's reverse mode on the user's rhs with Dual numbers
 # in it. Reverse mode over Duals is not forward-over-reverse:
 #
-# 1. time derivative: the Dual direction is in the state y(t). Reverse mode returns the gradient with respect to
+# 1. Time derivative: the Dual direction is in the state y(t). Reverse mode returns the gradient with respect to
 #    y's partials, which is zero (the output's value does not depend on them), so d/dt (J' λ) comes back as 0.
+#    This is what breaks the gradient here: the Rosenbrock adjoint solve then stops at maxiters, and
+#    SciMLSensitivity returns the cut-short gradient with only a warning. enzymevjp_zero_tderiv.jl injects just this
+#    into ReverseDiffVJP and gets EnzymeVJP's wrong gradient to 8 digits; KenCarp4 (no time derivative) and
+#    finite-difference solver Jacobians both give the right one (enzymevjp_probe.jl).
 # 2. Jacobian in λ: the Dual direction is in λ and y's partials are zero. This is right unless a Dual rule in the
 #    rhs takes a shortcut on zero partials; ForwardDiff's `^(::Dual, ::Real)` (and NaNMath.pow) does, so the terms
-#    with a non-integer power are lost.
+#    with a non-integer power are lost. A real error in the adjoint's Jacobian, but it does not change this
+#    gradient: with the branchless rhs below, or with KenCarp4, the result is the same as without it.
 #
 # Each check compares with ForwardDiff on the plain rhs. `branchless` is the same rhs with NaNMath.pow(x, y)
 # written as exp(y log x), which removes (2) but not (1).

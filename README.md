@@ -44,7 +44,10 @@ unreleased tesseract-jax#300; `.github/workflows/experiments.yml` installs it fr
 
 ## CI
 
-- `test.yml`, every push: the Julia tests, a check that the committed generated code is current, and the
-  Tesseract through juliacall.
-- `experiments.yml`, on demand and when the code it runs changes: each experiment in its own job, then a summary table in the run summary.
-  Saved runs are in `results/`.
+- `test.yml`, on pushes to main and on pull requests: the Julia tests, a check that the committed generated code
+  is current, and the Tesseract's apply and VJP through juliacall.
+- `experiments.yml`, on demand and when the code it runs changes: each experiment in its own job, then a summary
+  table in the run summary. Saved runs are in `results/`.
+
+`pipeline/from_source.py`, `calibrate_caption.py` and `nan_roundtrip.py` are the first pass's integration runs;
+CI does not run them (their results are in `results/local-2026-11-18/`).

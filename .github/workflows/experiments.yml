@@ -19,7 +19,7 @@ jobs:
   routes:
     name: "VJP route: ${{ matrix.route }}, ${{ matrix.nparams }} params"
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 150
     strategy:
       fail-fast: false
       matrix:
@@ -54,7 +54,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [restart, single, restart+fdjac, single+fdjac]
+        variant: [restart, single, restart+fdjac, restart+kencarp4]
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
@@ -66,9 +66,11 @@ jobs:
         run: |
           mkdir -p out
           julia --project=tools experiments/enzymevjp_probe.jl ${{ matrix.variant }} out/enzymevjp-${{ matrix.variant }}.json
-      - name: Mechanism (component checks)
+      - name: Mechanism (component checks) and the zero time derivative injected into ReverseDiffVJP
         if: matrix.variant == 'single'
-        run: julia --project=tools experiments/enzymevjp_mechanism.jl out/enzymevjp-mechanism.json
+        run: |
+          julia --project=tools experiments/enzymevjp_mechanism.jl out/enzymevjp-mechanism.json
+          julia --project=tools experiments/enzymevjp_zero_tderiv.jl out/enzymevjp-zero-tderiv.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
