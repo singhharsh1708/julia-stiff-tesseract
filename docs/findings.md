@@ -31,13 +31,13 @@ known misfits (the digitised values are read from QSPAtlas at run time and not s
 
 The fit lands on L0 0.00355/day, SLtg 6.35e-7, KdegPD1 0.00253 and 5.11 L, next to QSPAtlas's 0.0036, 6.247e-7,
 0.00246 and 5 L, reproducibly (CI and local agree to ten digits). With four parameters the gradient is not cheaper
-than finite differences here: one ForwardDiff VJP costs about 6.5 applies (112 vs 17 ms warm), so a value and
-gradient costs about 7.5 sweeps against 5 for forward differences, and the fastest adjoint here (section 3) costs
-4.4-5.7 applies per VJP, so the cost advantage needs more parameters. What the exact gradient should buy here is
-accuracy without a finite-difference step to choose for parameters that span 1e-7 to 5e6 (a fit by finite
-differences was not run). As published, three perturbed solves fail, and the optimiser needs the Tesseract to
-return NaN for them rather than raise (section 6, item 3); in CI two of the 34 evaluations (line-search trial
-points) returned NaN, which the script treats as a rejected step (job log of run 44514707281).
+than finite differences here: through juliacall a ForwardDiff VJP costs about 6.5 applies (112 vs 17 ms warm), so
+the Tesseract's apply plus VJP costs about 7.5 sweeps against 5 for forward differences (the adjoint routes of
+section 3 were timed in another harness, so I do not compare them here). What the exact gradient buys in this fit
+was not measured: a fit by finite differences, in the same log parameters, was not run. As published, three
+perturbed solves fail, and the optimiser needs the Tesseract to return NaN for them rather than raise (section 6,
+item 3); in CI two of the 34 evaluations (line-search trial points) returned NaN, which the script treats as a
+rejected step (job log of run 44514707281).
 
 ## 2. What a Julia Tesseract costs, and how to cut it
 
@@ -62,8 +62,8 @@ two caveats: Docker's default memory on a laptop is likely too small for the bui
 the build machine's CPU unless `cpu_target` is set (the template sets `JULIA_CPU_TARGET` for portability).
 
 The image (`tesseract build`) now takes 438-516 s and is 0.7-0.9 GB in CI (amd64); with ModelingToolkit it was
-12 minutes and 4.77 GB in a local arm64 build, so not like for like. From the image, healthy after 10-13 s, first apply 5.7-6.1 s,
-first VJP 7.6-8.4 s.
+12 minutes and 4.77 GB in a local arm64 build (docs/log.md), so not like for like. From the image, healthy after
+10-13 s, first apply 5.7-6.1 s, first VJP 7.6-8.4 s.
 
 ## 3. Which derivative route
 
@@ -84,8 +84,8 @@ shortest first call; on speed alone it loses to an adjoint with EnzymeVJP and fi
 after about 170-400 warm calls at 16 parameters (run 3: (71.6 - 14.7) / (0.407 - 0.075) s; run 2: 396) and
 330-630 at 8. At 2 parameters ForwardDiff was faster in run 2 (67 vs 76 ms) and the adjoint needs over 6000 calls
 in run 3; the Figure 4 fit's calls have 4 or 5 parameters, where I did not measure it. That adjoint is flat in the
-parameter count (0.075-0.097 s warm), but only with that non-default setting (section 4). InterpolatingAdjoint + EnzymeVJP is wrong
-too, by a cause I did not isolate.
+parameter count (0.075-0.097 s warm), but only with that non-default setting (section 4). InterpolatingAdjoint +
+EnzymeVJP is wrong too, by a cause I did not isolate.
 
 The template's Enzyme recipe was accurate on the ModelingToolkit model (with SciMLSensitivity loaded, which then
 picks the sensitivity method for the solve inside; probably its forward sensitivities at this size, not logged).
@@ -163,9 +163,9 @@ unless `STIFF_FAULT` is set.
    `/tesseract/output_data/run_<id>`: the SDK mounts a `tempfile.mkdtemp()` folder under /var/folders, which colima
    does not share with its VM by default. An `output_path` under $HOME fixes it, but the error does not point there.
 3. **A failed solve ended the optimisation.** An error raised in the Tesseract came back as HTTP 500 and then as a
-   JAX `CpuCallback` error that ended the run. Returning NaN (QSPAtlas's convention for a failed solve) passes cleanly
-   through `from_source` and tesseract-jax, and the caller can treat a non-finite loss as a rejected step; the
-   Figure 4 fit relies on it. Documenting that convention would help.
+   JAX `CpuCallback` error that ended the run. Returning NaN (QSPAtlas's convention for a failed solve) passes
+   cleanly through `from_source` and tesseract-jax, and the caller can treat a non-finite loss as a rejected step;
+   the Figure 4 fit relies on it. Documenting that convention would help.
 4. **First-call latency** (section 2): the health check passes before Julia has compiled anything, so the first
    request is the slow one; a system image removed it in-process for the traced request, not yet tried inside a
    built image.
