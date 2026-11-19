@@ -1,0 +1,224 @@
+{
+ "rms": {
+  "clean": {
+   "returncode": 0,
+   "report": [
+    "=== fault: clean   check_gradients took 15.9 s   passed: False",
+    "Gradient check along a random direction (seed=0, rtol=0.01, steps 1e-01 .. 1e-04)",
+    "",
+    "                                                 grad.d   fin. diff  rel. error    step  result",
+    "  pipeline                                    -2.77e+00   -2.77e+00    2.97e-06   1e-03  ok",
+    "",
+    "  #1 exponent, mouse_values -> human_values   -3.90e-03   -3.90e-03    6.72e-08   1e-03  ok",
+    "  #2 lindauer-julia                            7.57e+13         nan         inf   1e-01  FAIL  (finite difference too uncertain)",
+    "  #3 lindauer-julia                            2.79e+15         nan         inf   1e-01  FAIL  (finite difference too uncertain)",
+    "",
+    "#2 lindauer-julia disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. Its finite difference is too uncertain to be sure, as with a noisy output or in float32, so the gradient may still be right; check at another point too. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+   ],
+   "stderr": "",
+   "passed": false
+  },
+  "lindauer_vjp": {
+   "returncode": 0,
+   "report": [
+    "=== fault: lindauer_vjp   check_gradients took 15.9 s   passed: False",
+    "Gradient check along a random direction (seed=0, rtol=0.01, steps 1e-01 .. 1e-04)",
+    "",
+    "                                                 grad.d   fin. diff  rel. error    step  result",
+    "  pipeline                                    -8.48e+00   -2.77e+00    6.73e-01   1e-03  FAIL",
+    "",
+    "  #1 exponent, mouse_values -> human_values   -3.90e-03   -3.90e-03    6.72e-08   1e-03  ok",
+    "  #2 lindauer-julia                            1.82e+15         nan         inf   1e-01  FAIL  (finite difference too uncertain)",
+    "  #3 lindauer-julia                            6.71e+16         nan         inf   1e-01  FAIL  (finite difference too uncertain)",
+    "",
+    "#2 lindauer-julia disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. Its finite difference is too uncertain to be sure, as with a noisy output or in float32, so the gradient may still be right; check at another point too."
+   ],
+   "stderr": "",
+   "passed": false
+  },
+  "allometry_vjp": {
+   "returncode": 0,
+   "report": [
+    "=== fault: allometry_vjp   check_gradients took 15.8 s   passed: False",
+    "Gradient check along a random direction (seed=0, rtol=0.01, steps 1e-01 .. 1e-04)",
+    "",
+    "                                                 grad.d   fin. diff  rel. error    step  result",
+    "  pipeline                                    -2.98e+00   -2.77e+00    7.09e-02   1e-03  FAIL",
+    "",
+    "  #1 exponent, mouse_values -> human_values   -4.78e-04   -3.90e-03    8.77e-01   1e-03  FAIL",
+    "  #2 lindauer-julia                            7.57e+13         nan         inf   1e-01  FAIL  (finite difference too uncertain)",
+    "  #3 lindauer-julia                            2.79e+15         nan         inf   1e-01  FAIL  (finite difference too uncertain)",
+    "",
+    "#1 exponent, mouse_values -> human_values disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+   ],
+   "stderr": "",
+   "passed": false
+  },
+  "glue": {
+   "returncode": 0,
+   "report": [
+    "=== fault: glue   check_gradients took 15.9 s   passed: False",
+    "Gradient check along a random direction (seed=0, rtol=0.01, steps 1e-01 .. 1e-04)",
+    "",
+    "                                                 grad.d   fin. diff  rel. error    step  result",
+    "  pipeline                                    -2.52e+00   -2.77e+00    8.96e-02   1e-03  FAIL",
+    "",
+    "  #1 exponent, mouse_values -> human_values   -3.90e-03   -3.90e-03    6.72e-08   1e-03  ok",
+    "  #2 lindauer-julia                            7.57e+13         nan         inf   1e-01  FAIL  (finite difference too uncertain)",
+    "  #3 lindauer-julia                            2.79e+15         nan         inf   1e-01  FAIL  (finite difference too uncertain)",
+    "",
+    "#2 lindauer-julia disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. Its finite difference is too uncertain to be sure, as with a noisy output or in float32, so the gradient may still be right; check at another point too."
+   ],
+   "stderr": "",
+   "passed": false
+  }
+ },
+ "elementwise": {
+  "clean": {
+   "returncode": 0,
+   "report": [
+    "=== fault: clean   check_gradients took 14.1 s   passed: True",
+    "Gradient check along a random direction (seed=0, rtol=0.01, steps 1e-01 .. 1e-04)",
+    "",
+    "                                                 grad.d   fin. diff  rel. error    step  result",
+    "  pipeline                                    -2.77e+00   -2.77e+00    2.97e-06   1e-03  ok",
+    "",
+    "  #1 exponent, mouse_values -> human_values   -3.90e-03   -3.90e-03    6.72e-08   1e-03  ok",
+    "  #2 lindauer-julia                           -9.14e+02   -9.14e+02    2.86e-08   1e-03  ok",
+    "  #3 lindauer-julia                            1.16e+04    1.16e+04    7.98e-07   1e-03  ok",
+    "",
+    "Gradients agree."
+   ],
+   "stderr": "",
+   "passed": true
+  },
+  "lindauer_vjp": {
+   "returncode": 0,
+   "report": [
+    "=== fault: lindauer_vjp   check_gradients took 13.9 s   passed: False",
+    "Gradient check along a random direction (seed=0, rtol=0.01, steps 1e-01 .. 1e-04)",
+    "",
+    "                                                 grad.d   fin. diff  rel. error    step  result",
+    "  pipeline                                    -8.48e+00   -2.77e+00    6.73e-01   1e-03  FAIL",
+    "",
+    "  #1 exponent, mouse_values -> human_values   -3.90e-03   -3.90e-03    6.72e-08   1e-03  ok",
+    "  #2 lindauer-julia                            4.96e+03   -9.14e+02    1.18e+00   1e-03  FAIL",
+    "  #3 lindauer-julia                            2.28e+05    1.16e+04    9.49e-01   1e-03  FAIL",
+    "",
+    "#2 lindauer-julia disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+   ],
+   "stderr": "",
+   "passed": false
+  },
+  "allometry_vjp": {
+   "returncode": 0,
+   "report": [
+    "=== fault: allometry_vjp   check_gradients took 14.0 s   passed: False",
+    "Gradient check along a random direction (seed=0, rtol=0.01, steps 1e-01 .. 1e-04)",
+    "",
+    "                                                 grad.d   fin. diff  rel. error    step  result",
+    "  pipeline                                    -2.98e+00   -2.77e+00    7.09e-02   1e-03  FAIL",
+    "",
+    "  #1 exponent, mouse_values -> human_values   -4.78e-04   -3.90e-03    8.77e-01   1e-03  FAIL",
+    "  #2 lindauer-julia                           -9.14e+02   -9.14e+02    2.86e-08   1e-03  ok",
+    "  #3 lindauer-julia                            1.16e+04    1.16e+04    7.98e-07   1e-03  ok",
+    "",
+    "#1 exponent, mouse_values -> human_values disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+   ],
+   "stderr": "",
+   "passed": false
+  },
+  "glue": {
+   "returncode": 0,
+   "report": [
+    "=== fault: glue   check_gradients took 14.0 s   passed: False",
+    "Gradient check along a random direction (seed=0, rtol=0.01, steps 1e-01 .. 1e-04)",
+    "",
+    "                                                 grad.d   fin. diff  rel. error    step  result",
+    "  pipeline                                    -2.52e+00   -2.77e+00    8.96e-02   1e-03  FAIL",
+    "",
+    "  #1 exponent, mouse_values -> human_values   -3.90e-03   -3.90e-03    6.72e-08   1e-03  ok",
+    "  #2 lindauer-julia                           -9.14e+02   -9.14e+02    2.86e-08   1e-03  ok",
+    "  #3 lindauer-julia                            1.16e+04    1.16e+04    7.98e-07   1e-03  ok",
+    "",
+    "Every Tesseract agrees with finite differences at the inputs it received, but the pipeline does not. The problem is in the JAX code between the Tesseracts: look for jax.lax.stop_gradient, operations with zero or undefined derivatives (round, argmax, integer casts, comparisons, sqrt at 0), or a custom_vjp."
+   ],
+   "stderr": "",
+   "passed": false
+  }
+ },
+ "floor": {
+  "clean": {
+   "returncode": 0,
+   "report": [
+    "=== fault: clean   check_gradients took 14.3 s   passed: False",
+    "Gradient check along a random direction (seed=0, rtol=0.01, steps 1e-01 .. 1e-04)",
+    "",
+    "                                                 grad.d   fin. diff  rel. error    step  result",
+    "  pipeline                                    -2.77e+00   -2.77e+00    2.97e-06   1e-03  ok",
+    "",
+    "  #1 exponent, mouse_values -> human_values   -3.90e-03   -3.90e-03    6.72e-08   1e-03  ok",
+    "  #2 lindauer-julia                            7.57e+10         nan         inf   1e-01  FAIL  (finite difference too uncertain)",
+    "  #3 lindauer-julia                            2.79e+12         nan         inf   1e-01  FAIL  (finite difference too uncertain)",
+    "",
+    "#2 lindauer-julia disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. Its finite difference is too uncertain to be sure, as with a noisy output or in float32, so the gradient may still be right; check at another point too. The pipeline gradient still agrees along this direction, so the error may not reach this loss; try another seed."
+   ],
+   "stderr": "",
+   "passed": false
+  },
+  "lindauer_vjp": {
+   "returncode": 0,
+   "report": [
+    "=== fault: lindauer_vjp   check_gradients took 14.2 s   passed: False",
+    "Gradient check along a random direction (seed=0, rtol=0.01, steps 1e-01 .. 1e-04)",
+    "",
+    "                                                 grad.d   fin. diff  rel. error    step  result",
+    "  pipeline                                    -8.48e+00   -2.77e+00    6.73e-01   1e-03  FAIL",
+    "",
+    "  #1 exponent, mouse_values -> human_values   -3.90e-03   -3.90e-03    6.72e-08   1e-03  ok",
+    "  #2 lindauer-julia                            1.82e+12         nan         inf   1e-01  FAIL  (finite difference too uncertain)",
+    "  #3 lindauer-julia                            6.71e+13         nan         inf   1e-01  FAIL  (finite difference too uncertain)",
+    "",
+    "#2 lindauer-julia disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. Its finite difference is too uncertain to be sure, as with a noisy output or in float32, so the gradient may still be right; check at another point too."
+   ],
+   "stderr": "",
+   "passed": false
+  },
+  "allometry_vjp": {
+   "returncode": 0,
+   "report": [
+    "=== fault: allometry_vjp   check_gradients took 14.3 s   passed: False",
+    "Gradient check along a random direction (seed=0, rtol=0.01, steps 1e-01 .. 1e-04)",
+    "",
+    "                                                 grad.d   fin. diff  rel. error    step  result",
+    "  pipeline                                    -2.98e+00   -2.77e+00    7.09e-02   1e-03  FAIL",
+    "",
+    "  #1 exponent, mouse_values -> human_values   -4.78e-04   -3.90e-03    8.77e-01   1e-03  FAIL",
+    "  #2 lindauer-julia                            7.57e+10         nan         inf   1e-01  FAIL  (finite difference too uncertain)",
+    "  #3 lindauer-julia                            2.79e+12         nan         inf   1e-01  FAIL  (finite difference too uncertain)",
+    "",
+    "#1 exponent, mouse_values -> human_values disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there."
+   ],
+   "stderr": "",
+   "passed": false
+  },
+  "glue": {
+   "returncode": 0,
+   "report": [
+    "=== fault: glue   check_gradients took 14.3 s   passed: False",
+    "Gradient check along a random direction (seed=0, rtol=0.01, steps 1e-01 .. 1e-04)",
+    "",
+    "                                                 grad.d   fin. diff  rel. error    step  result",
+    "  pipeline                                    -2.52e+00   -2.77e+00    8.96e-02   1e-03  FAIL",
+    "",
+    "  #1 exponent, mouse_values -> human_values   -3.90e-03   -3.90e-03    6.72e-08   1e-03  ok",
+    "  #2 lindauer-julia                            7.57e+10         nan         inf   1e-01  FAIL  (finite difference too uncertain)",
+    "  #3 lindauer-julia                            2.79e+12         nan         inf   1e-01  FAIL  (finite difference too uncertain)",
+    "",
+    "#2 lindauer-julia disagrees with a finite difference of its own apply, at the inputs it received in the pipeline. Start there. Its finite difference is too uncertain to be sure, as with a noisy output or in float32, so the gradient may still be right; check at another point too."
+   ],
+   "stderr": "",
+   "passed": false
+  }
+ }
+}

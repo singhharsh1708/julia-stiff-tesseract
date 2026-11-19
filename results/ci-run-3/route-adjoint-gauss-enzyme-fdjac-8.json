@@ -1,0 +1,1 @@
+{"nparams":8,"first_s":69.226612963,"route":"adjoint-gauss-enzyme-fdjac","other_warnings":[],"warm_min_s":0.075597813,"load_s":3.48850272,"second_s":0.077779663,"julia":"1.10.12","precompile_s":10,"maxiters_warnings":0,"ok":true,"max_rel_err_vs_forwarddiff":3.559530035498457e-8}

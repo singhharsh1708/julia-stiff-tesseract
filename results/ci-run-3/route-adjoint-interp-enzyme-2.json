@@ -1,0 +1,1 @@
+{"nparams":2,"first_s":911.7720332,"route":"adjoint-interp-enzyme","other_warnings":[],"load_s":4.031166279,"second_s":835.501836432,"julia":"1.10.12","precompile_s":1120,"maxiters_warnings":5,"ok":true,"max_rel_err_vs_forwarddiff":0.001480898063501734}

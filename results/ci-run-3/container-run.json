@@ -1,0 +1,1 @@
+{"image": "lindauer-julia:ci", "healthy_s": 10.373843467000029, "first_apply_s": 6.094620861000067, "warm_apply_s": 0.02024037400008183, "log10_ratio": -1.301768134667444, "first_vjp_s": 8.442940770000064, "warm_vjp_s": 0.11550052200004757}

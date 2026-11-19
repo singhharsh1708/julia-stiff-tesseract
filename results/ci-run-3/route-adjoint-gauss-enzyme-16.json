@@ -1,0 +1,1 @@
+{"nparams":16,"first_s":154.913146649,"route":"adjoint-gauss-enzyme","other_warnings":[],"warm_min_s":93.63922442,"load_s":3.512663297,"second_s":93.843729218,"julia":"1.10.12","precompile_s":9,"maxiters_warnings":5,"ok":true,"max_rel_err_vs_forwarddiff":0.5493961926188309}

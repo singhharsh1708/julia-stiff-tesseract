@@ -1,0 +1,1 @@
+{"sysimage": "/home/runner/work/julia-stiff-tesseract/julia-stiff-tesseract/sys.so", "load_s": 2.4221156149999388, "first_apply_s": 0.042679693999957635, "warm_apply_s": 0.01758928900005685, "first_vjp_s": 0.11381518799998958, "warm_vjp_s": 0.12069893800003229, "log10_ratio": -1.301768134667444}
