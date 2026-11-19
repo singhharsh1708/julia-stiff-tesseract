@@ -15,7 +15,8 @@ Tesseract, valid here) is left out too; the same grid is in results/local-2026-1
   it worked. Tried locally, none of which helped: a function barrier so the solve loop sees concrete vectors (the
   error moves into the loop), `ODEFunction{true, FullSpecialize}` instead of the default AutoSpecialize (same
   error), and `Enzyme.API.strictAliasing!(false)` (fails instead with "No matching function wrapper was found").
-  Not followed further; the template route's numbers are from CI run 1.
+  Without the retcode check the error moves to the top of the dose-loop function; the template's image uses Julia
+  1.11 (not tried). Not followed further; the template route's numbers are from CI run 1.
 
 ## VJP routes
 
