@@ -6,8 +6,10 @@ Figure 4 of Lindauer et al. 2017 is a one-at-a-time sensitivity analysis: log10 
 0.5 mg/kg Q3W with each of 16 parameters multiplied by 5 and by 0.2 (64 bars), plus the two base values in the
 caption (-1.29 / -0.39). The paper does not state the base case's blood volume or tumour growth scenario.
 QSPAtlas.jl chose them by a discrete search (V_blood 5 L, medium growth: L0 0.0036/day, SLtg 6.247e-7) and then
-matched 58 of the 64 bars. Here the four unstated values (V_blood, L0, SLtg, KdegPD1) are fitted to all 66 numbers
-by gradient, through the served Tesseract and tesseract-jax.
+matched 58 of the 64 bars. Here the four unstated values (V_blood, L0, SLtg, KdegPD1) are fitted by gradient, through
+the served Tesseract and tesseract-jax, to the 60 of the 66 numbers that are not QSPAtlas's known misfits. The fit
+starts from the published values with a 5 L blood volume (as published, some solves fail), so V_blood is in effect
+set by the start and only adjusted; L0, SLtg and KdegPD1 are found.
 
 The digitised bars are read at run time from QSPAtlas.jl (they derive from the paper's figure, CC BY-NC-ND 4.0;
 they are not copied into this repository).
@@ -32,6 +34,7 @@ REF = "models/lindauer_2017/reference"
 NAMES = {"L": "Lfrac"}                         # Figure 4 label -> raw parameter name
 UNKNOWNS = ["V_blood", "L0", "SLtg", "KdegPD1"]
 AS_PUBLISHED = np.log([1400.0, 0.0088, 2.575e-6, 0.00246])   # mouse V_blood, Table S3 row 1, KdegPD1 as printed
+START = np.log([5.0e6, 0.0088, 2.575e-6, 0.00246])           # as published, with a human blood volume (5 L)
 QSPATLAS_FIX = np.log([5.0e6, 0.0036, 6.247e-7, 0.00246])    # 5 L, medium growth (QSPAtlas Fix list)
 BOUNDS = [(np.log(1e2), np.log(1e8)), (np.log(1e-4), np.log(0.1)), (np.log(1e-8), np.log(1e-4)),
           (np.log(1e-4), np.log(0.1))]
@@ -66,10 +69,10 @@ def main(outfile):
     log = {"targets": len(tg), "outliers": int(outlier.sum())}
     with Tesseract.from_source("lindauer/tesseract_api.py", startup_timeout=900) as lindauer:
 
-        def predict(x):
+        def predict(x, which=range(len(tg))):
             values = jnp.exp(x)
             preds = []
-            for _, dose, param, mult, _ in tg:
+            for _, dose, param, mult, _ in (tg[i] for i in which):
                 if param is None:                      # caption base value
                     fields, theta = UNKNOWNS, values
                 elif param in UNKNOWNS:                # a fitted parameter, perturbed
@@ -84,14 +87,34 @@ def main(outfile):
                 preds.append(jnp.log10(tv[-1] / tv[0]))
             return jnp.stack(preds)
 
+        # Fitted to the 60 bars without QSPAtlas's six known misfits: those residuals are structural and large, would
+        # dominate a sum of squares over all 66, and two of them fail to solve at some points.
+        good = np.flatnonzero(~outlier)
+
         def loss(x):
-            return jnp.sum((predict(x) - y_obs) ** 2)
+            return jnp.sum((predict(x, good) - y_obs[good]) ** 2)
 
         vg = jax.value_and_grad(loss)
-        for label, x in (("as_published", AS_PUBLISHED), ("qspatlas_fix", QSPATLAS_FIX)):
+
+        def describe(x):
+            # The same measures at every point, over the bars whose solve succeeded: sse_fit is the fitted objective
+            # (the 60 good bars; NaN as an objective if one fails, then summed over the rest); rms over the good bars,
+            # over every finite bar, and over the six misfits; and the bars whose solve failed.
             r = np.asarray(predict(jnp.asarray(x))) - np.asarray(y_obs)
-            log[label] = {"loss": float(np.sum(r**2)), "rms_all": float(np.sqrt(np.mean(r**2))),
-                          "rms_good": float(np.sqrt(np.mean(r[~outlier] ** 2)))}
+            ok = ~np.isnan(r)
+
+            def rms(mask):
+                return float(np.sqrt(np.mean(r[mask] ** 2))) if mask.any() else float("nan")
+
+            return {"sse_fit": float(np.sum(r[ok & ~outlier] ** 2)), "rms_good": rms(ok & ~outlier),
+                    "rms_finite": rms(ok), "rms_misfits": rms(ok & outlier),
+                    "nan_targets": [tg[i][0] for i in np.flatnonzero(~ok)]}
+
+        # As published (a mouse blood volume in man) some perturbed solves fail and return NaN, so the fit starts
+        # from the published values with a human blood volume (5 L, which the fit then only adjusts); the failing
+        # bars are recorded.
+        for label, x in (("as_published", AS_PUBLISHED), ("start", START), ("qspatlas_fix", QSPATLAS_FIX)):
+            log[label] = describe(x)
             print(label, log[label], flush=True)
 
         calls = {"n": 0}
@@ -107,23 +130,21 @@ def main(outfile):
             return v, np.asarray(g, dtype=float)
 
         t0 = time.perf_counter()
-        res = minimize(fun, AS_PUBLISHED, jac=True, method="L-BFGS-B", bounds=BOUNDS, options={"maxiter": 60})
+        res = minimize(fun, START, jac=True, method="L-BFGS-B", bounds=BOUNDS, options={"maxiter": 60})
         log["calibration_s"] = time.perf_counter() - t0
         log["value_and_grad_evals"] = calls["n"]
-        r = np.asarray(predict(jnp.asarray(res.x))) - np.asarray(y_obs)
-        log["fit"] = {"values": dict(zip(UNKNOWNS, np.exp(res.x).tolist(), strict=True)), "loss": float(res.fun),
-                      "rms_all": float(np.sqrt(np.mean(r**2))), "rms_good": float(np.sqrt(np.mean(r[~outlier] ** 2))),
-                      "message": str(res.message),
-                      "outlier_residuals": {tg[i][0]: float(r[i]) for i in np.flatnonzero(outlier)}}
+        log["fit"] = {"values": dict(zip(UNKNOWNS, np.exp(res.x).tolist(), strict=True)), **describe(res.x),
+                      "message": str(res.message)}
     print(json.dumps(log, indent=1))
     with open(outfile, "w") as f:
         json.dump(log, f, indent=1)
 
 
 # Base values of the parameters that are varied but not fitted: human_raw in lindauer_model.jl (Table 1 human
-# values and the species-invariant Table 1 / S2 values); the same in every Table S3 scenario.
+# values and the species-invariant Table 1 / S2 values); the same in every Table S3 scenario, which sets only L0
+# and SLtg (both fitted here). The 5 mg/kg panels vary V2, the 0.5 mg/kg panels EC50TP instead.
 BASE_VALUES = {"gamma": 2.28, "FR": 0.715, "Tmulti": 4.32, "N_PD1_TC": 10000.0, "N_Tcell": 1000.0, "EMAXTP": 94.7,
-               "V1": 2877.0, "CL": 167.0, "PLQ": 12.7, "Lfrac": 0.002, "CLup": 0.0366, "V2": 2854.0}
+               "EC50TP": 1.46, "V1": 2877.0, "CL": 167.0, "PLQ": 12.7, "Lfrac": 0.002, "CLup": 0.0366, "V2": 2854.0}
 
 if __name__ == "__main__":
     main(sys.argv[1])

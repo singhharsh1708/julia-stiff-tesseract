@@ -56,6 +56,7 @@ result = Dict{String, Any}("variant" => variant, "julia" => string(VERSION))
 ref = ForwardDiff.gradient(th -> tv_end(th, nothing), theta)
 result["forwarddiff"] = ref
 for (label, sensealg) in (("enzymevjp", GaussAdjoint(autojacvec = EnzymeVJP())),
+        # A compiled tape is right for these two parameters (V_blood, L0); with gamma it is not (experiments/routes.jl).
         ("reversediffvjp", GaussAdjoint(autojacvec = ReverseDiffVJP(true))))
     r = Dict{String, Any}()
     try

@@ -11,7 +11,8 @@ tumour, occupancy-driven tumour growth inhibition) as rebuilt in
 three weeks for 26 weeks. `lindauer/julia/src/lindauer_model.jl` is QSPAtlas's ModelingToolkit file, unchanged
 (MIT). `tools/generate.jl` turns it into plain Julia once, so the Tesseract loads OrdinaryDiffEq and ForwardDiff
 but not ModelingToolkit; `tools/test.jl` checks the generated code against ModelingToolkit and QSPAtlas's numbers.
-No data from the paper is stored here; the Figure 4 experiment reads QSPAtlas's digitised values at run time.
+No data from the paper is stored here; the Figure 4 experiment reads QSPAtlas's digitised values at run time and
+keeps only summaries of the fit (RMS values, fitted parameters).
 
 ## Layout
 

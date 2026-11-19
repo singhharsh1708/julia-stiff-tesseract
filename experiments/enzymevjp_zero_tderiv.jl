@@ -28,6 +28,7 @@ function tv_end(th, sensealg)
 end
 ref = ForwardDiff.gradient(th -> tv_end(th, nothing), theta)
 relerr(g) = maximum(abs.(g .- ref) ./ abs.(ref))
+# A compiled tape is right for these two parameters (V_blood, L0); with gamma it is not (experiments/routes.jl).
 sa = GaussAdjoint(autojacvec = ReverseDiffVJP(true))
 result = Dict{String, Any}("forwarddiff" => ref)
 g, n, _ = count_maxiters(() -> Zygote.gradient(th -> tv_end(th, sa), theta)[1])

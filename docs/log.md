@@ -153,3 +153,13 @@ OrdinaryDiffEqRosenbrock 2.7.5, LinearSolve 5.18.3, ModelingToolkit 11.46.1, Sci
   (DiffEqBase's Enzyme rule hands it to SciMLSensitivity's adjoint). enzyme_sens_timing.jl: first call 494.9 s,
   second 1.65 s, at a new point 1.62 s; VJP agrees with ForwardDiff to 6.4e-10 (results/local-2026-11-18/raw-enzyme-sens.log, load ~11-16).
   The MixedReturnException above is what happens without SciMLSensitivity loaded.
+
+## 2026-11-19: `env:` in tesseract_config.yaml also applies to from_source
+
+Moving the juliacall settings from Dockerfile `ENV` lines to the config's `env:` section (cleaner, and the place
+the jpb/julia template points to) broke every `from_source` run: tesseract-core 1.15 applies `env:` to the local
+server process too, so PYTHON_JULIACALL_PROJECT=/tesseract/julia (an image path) replaced the caller's working
+value and juliacall stopped with "path does not exist"; JULIA_DEPOT_PATH=/tesseract/.julia would have failed next.
+The image and `from_tesseract_api` were fine. Image-only settings now sit in a custom build step (`ENV ...`).
+A config option for variables that apply only inside the image would make the `env:` section safe for this case.
+The CI job that hit it reported success because the step piped through `tee` without `pipefail`; fixed.

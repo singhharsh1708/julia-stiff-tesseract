@@ -13,7 +13,8 @@ What is weak:
 - Its cost grows with the number of parameters. Every result we have is for 2-4 parameters, so we cannot say
   where it stops being the right choice, and the "Enzyme is 20x slower" line in the write-up is only true there.
 - We compared three routes but not the one SciML recommends for this case: SciMLSensitivity adjoints driven by
-  Zygote/ReverseDiff (`sensealg = GaussAdjoint(autojacvec = ReverseDiffVJP(true))` or `InterpolatingAdjoint`), with
+  Zygote/ReverseDiff (`sensealg = GaussAdjoint(autojacvec = ReverseDiffVJP(true))` or `InterpolatingAdjoint`; the
+  compiled tape, `true`, is wrong once the model has the guard `if`, see experiments/routes.jl), with
   no Enzyme over the user's code. The Enzyme route only worked because DiffEqBase hands the solve to that same
   machinery; we never measured the machinery without Enzyme's 8-minute compile in front of it.
 - The VJP endpoint computes the full Jacobian and throws most of it away. Fine for 2 outputs x 4 parameters;
@@ -59,7 +60,8 @@ Cost: one to two hours (sysimage builds are slow but unattended).
 - `tesseract-runtime check-gradients` (core's per-Tesseract check) and the `test_cases` in tesseract_config: we
   never ran core's own checker, so our "per-Tesseract checks cannot see the glue bug" is argued, not shown side by
   side. Running it on both Tesseracts at the same point would make the #300 comparison concrete.
-- `env:` in tesseract_config.yaml for the JULIACALL variables, instead of `ENV` lines in custom steps.
+- `env:` in tesseract_config.yaml for the JULIACALL variables, instead of `ENV` lines in custom steps. (Tried
+  2026-11-19: `from_source` applies `env:` too, so image paths there break local runs; see docs/log.md.)
 - The template's base image (julia:1.11-bookworm) instead of downloading Julia ourselves; probably smaller image.
 - Profiling (`runtime_config={"profiling": True}`): we timed from outside; the runtime can tell us how much of a
   warm call is HTTP and encoding versus Julia.
@@ -95,4 +97,5 @@ grid (near-zero entry with a wrong derivative; signed entry; NaN at the perturbe
 2. A system image through juliacall: first call before and after. (Answers: can first-call latency be removed.)
 3. The tornado calibration (16 parameters, 66 targets, log space). (Answers: does the chain earn its keep.)
 4. Core's per-Tesseract checker next to #300 at the same point, and the near-zero / signed / NaN test grid.
-5. Small ones: dose batching, `env:` in config, template base image, tolerance relaxation, profiling a warm call.
+5. Small ones: dose batching, template base image, tolerance relaxation, profiling a warm call (`env:` in config was
+   tried and reverted, see docs/log.md).

@@ -8,7 +8,7 @@ on:
 
 concurrency:
   group: experiments-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false   # a new push queues behind a running experiment instead of discarding it
 
 env:
   JULIA_VERSION: "1.10.12"
@@ -159,9 +159,10 @@ jobs:
           uv pip install --python .venv/bin/python "tesseract-core[runtime]==1.15.0" juliacall==0.9.37 numpy scipy jax "$TESSERACT_JAX"
       - name: Calibrate
         run: |
+          set -o pipefail
           source env.sh
           mkdir -p out
-          .venv/bin/python experiments/fig4_calibration.py out/fig4.json | tee out/fig4.log
+          .venv/bin/python experiments/fig4_calibration.py out/fig4.json 2>&1 | tee out/fig4.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:

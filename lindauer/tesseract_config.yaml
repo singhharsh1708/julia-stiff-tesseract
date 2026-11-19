@@ -5,14 +5,6 @@ description: |
   Julia with Rodas5P from code generated once from the ModelingToolkit model; derivatives by forward-mode AD
   (ForwardDiff) through the stiff solver.
 
-# juliacall uses the image's Julia and this project, and skips its own package management.
-env:
-  PYTHON_JULIACALL_EXE: "/usr/local/julia/bin/julia"
-  PYTHON_JULIACALL_PROJECT: "/tesseract/julia"
-  PYTHON_JULIAPKG_OFFLINE: "yes"
-  JULIA_DEPOT_PATH: "/tesseract/.julia"
-  JULIA_PKG_PRECOMPILE_AUTO: "0"
-
 build_config:
   base_image: "julia:1.10-bookworm"
   package_data:
@@ -28,3 +20,12 @@ build_config:
       RUN mkdir -p /tesseract/.julia && JULIA_DEPOT_PATH=/tesseract/.julia \
           julia --project=/tesseract/julia -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()' && \
           chmod -R 777 /tesseract/.julia /tesseract/julia
+    # In the image, juliacall uses the image's Julia and this project, and skips its own package management.
+    # These paths exist only in the image, so they are set here and not under `env:`, which from_source also
+    # applies (a local run takes them from env.sh instead).
+    - |
+      ENV PYTHON_JULIACALL_EXE=/usr/local/julia/bin/julia \
+          PYTHON_JULIACALL_PROJECT=/tesseract/julia \
+          PYTHON_JULIAPKG_OFFLINE=yes \
+          JULIA_DEPOT_PATH=/tesseract/.julia \
+          JULIA_PKG_PRECOMPILE_AUTO=0

@@ -6,7 +6,8 @@
 # enzyme                    the jpb/julia template's recipe call, autodiff(set_runtime_activity(Reverse), ...),
 #                           with SciMLSensitivity loaded (DiffEqBase then hands the solve to its adjoint)
 # adjoint-gauss-enzyme      Zygote + SciMLSensitivity GaussAdjoint(autojacvec = EnzymeVJP())
-# adjoint-gauss-reversediff Zygote + GaussAdjoint(autojacvec = ReverseDiffVJP(true))
+# adjoint-gauss-reversediff Zygote + GaussAdjoint(autojacvec = ReverseDiffVJP()). Not ReverseDiffVJP(true): a compiled
+#                           tape keeps the branch of the model's guard `if` it was recorded on, and gives d/dgamma = 0
 # adjoint-interp-enzyme     Zygote + InterpolatingAdjoint(autojacvec = EnzymeVJP())
 # adjoint-gauss-enzyme-fdjac  GaussAdjoint(autojacvec = EnzymeVJP()) with Rodas5P(autodiff = AutoFiniteDiff()), so no
 #                           ForwardDiff Duals reach Enzyme (see experiments/enzymevjp_mechanism.jl)
@@ -48,7 +49,7 @@ elseif startswith(route, "adjoint")
     using OrdinaryDiffEq: ODEProblem, solve, Rodas5P, AutoFiniteDiff
     const SENSEALG = Dict(
         "adjoint-gauss-enzyme" => GaussAdjoint(autojacvec = EnzymeVJP()),
-        "adjoint-gauss-reversediff" => GaussAdjoint(autojacvec = ReverseDiffVJP(true)),
+        "adjoint-gauss-reversediff" => GaussAdjoint(autojacvec = ReverseDiffVJP()),
         "adjoint-interp-enzyme" => InterpolatingAdjoint(autojacvec = EnzymeVJP()),
         "adjoint-gauss-enzyme-fdjac" => GaussAdjoint(autojacvec = EnzymeVJP()),
     )[route]

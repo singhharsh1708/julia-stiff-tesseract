@@ -24,5 +24,11 @@
   warning only. GaussAdjoint builds the adjoint Jacobian with ForwardDiff on the forward rhs (build_adjoint_jac),
   not through the VJP, so the λ-Jacobian error is not reached here. Robertson (integer powers) and a two-state
   toy with `u^1.5` showed no gradient error above 5e-7 (scratch runs, not kept; maxiters not checked).
+- `fig4.json`: `experiments/fig4_calibration.py`, L0, SLtg and KdegPD1 (and V_blood, started at 5 L) fitted by
+  gradient (L-BFGS-B through the served Tesseract and tesseract-jax) to the 60 Figure 4 numbers that are not
+  QSPAtlas's known misfits. RMS over those 60 (log10 units): as published (a mouse blood volume in man) 4.65 over
+  the 59 that solve (3 of the 66 solves fail); from the published values with a 5 L blood volume 0.349; after 34 gradient
+  evaluations (283 s) 0.0053, against 0.0192 at QSPAtlas's hand-chosen fix. Fitted: V_blood 5.11 L, L0 0.00355/day,
+  SLtg 6.35e-7, KdegPD1 0.00253 (QSPAtlas: 5 L, 0.0036, 6.247e-7, 0.00246). RMS over the six misfits stays 1.87.
 - Not kept: GaussAdjoint with FBDF gave a near-zero gradient with every VJP backend, including ReverseDiffVJP and
   finite-difference Jacobians; a separate problem (possibly also a stalled adjoint), not followed up.

@@ -110,3 +110,8 @@ if __name__ == "__main__":
         print(rule, json.dumps(results[rule])[:400], flush=True)
     with open(outfile, "w") as f:
         json.dump(results, f, indent=1)
+    failed = [(rule, case) for rule, cases in results.items() for case, v in cases.items() if v.get("returncode")]
+    if failed:  # a run that crashed checked nothing: fail the job rather than report it
+        for rule, case in failed:
+            print(f"{rule} / {case} exited {results[rule][case]['returncode']}:\n{results[rule][case]['stderr']}")
+        sys.exit(1)

@@ -1,6 +1,6 @@
 # Generate plain Julia from the ModelingToolkit model, so the Tesseract does not load ModelingToolkit at run time.
 #
-#   julia --project=tools tools/generate.jl
+#   julia --project=tools tools/generate.jl [out_dir]
 #
 # Writes lindauer/julia/src/generated/lindauer_params.jl (the plain-Julia part of the model file: constants, parameter
 # sets, `derive`) and lindauer/julia/src/generated/lindauer_rhs.jl (right-hand side and Jacobian of the compiled system,
@@ -8,7 +8,7 @@
 using ModelingToolkit
 
 const SRC = joinpath(@__DIR__, "..", "lindauer", "julia", "src")
-const OUT = joinpath(SRC, "generated")
+const OUT = isempty(ARGS) ? joinpath(SRC, "generated") : ARGS[1]
 mkpath(OUT)
 model_file = joinpath(SRC, "lindauer_model.jl")
 include(model_file)

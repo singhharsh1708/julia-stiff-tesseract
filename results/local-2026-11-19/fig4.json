@@ -1,0 +1,45 @@
+{
+ "targets": 66,
+ "outliers": 6,
+ "as_published": {
+  "sse_fit": 1276.6278530281402,
+  "rms_good": 4.651640594544674,
+  "rms_finite": 4.67981323352101,
+  "rms_misfits": 5.077233910114768,
+  "nan_targets": [
+   "gamma x5 @ 5 mg/kg",
+   "SLtg x5 @ 5 mg/kg",
+   "gamma x5 @ 0.5 mg/kg"
+  ]
+ },
+ "start": {
+  "sse_fit": 7.326864189525064,
+  "rms_good": 0.3494487132023111,
+  "rms_finite": 0.6722782299072503,
+  "rms_misfits": 1.9365934449160906,
+  "nan_targets": []
+ },
+ "qspatlas_fix": {
+  "sse_fit": 0.022096198325752322,
+  "rms_good": 0.01919036143734328,
+  "rms_finite": 0.5745581999057491,
+  "rms_misfits": 1.9046274376232544,
+  "nan_targets": []
+ },
+ "calibration_s": 283.22683537501143,
+ "value_and_grad_evals": 34,
+ "fit": {
+  "values": {
+   "V_blood": 5113953.846552147,
+   "L0": 0.0035522963494858256,
+   "SLtg": 6.353935142469907e-07,
+   "KdegPD1": 0.0025312091843548066
+  },
+  "sse_fit": 0.0016727997539986174,
+  "rms_good": 0.0052801511247290035,
+  "rms_finite": 0.5628671727831368,
+  "rms_misfits": 1.8667445449784226,
+  "nan_targets": [],
+  "message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH"
+ }
+}

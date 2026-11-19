@@ -26,12 +26,8 @@ jobs:
         run: julia --project=tools tools/test.jl
       - name: Generated code is up to date
         run: |
-          norm() { sed -E 's/ₛᵧₘ[0-9]+//g' "$1"; }
-          for f in lindauer_params.jl lindauer_rhs.jl; do norm lindauer/julia/src/generated/$f > /tmp/committed-$f; done
-          julia --project=tools tools/generate.jl
-          for f in lindauer_params.jl lindauer_rhs.jl; do
-            norm lindauer/julia/src/generated/$f | diff -q /tmp/committed-$f - || { echo "$f is stale: run tools/generate.jl"; exit 1; }
-          done
+          julia --project=tools tools/generate.jl "$RUNNER_TEMP/generated"
+          julia --project=tools tools/check_generated.jl "$RUNNER_TEMP/generated"
 
   tesseract:
     name: the Tesseract through juliacall

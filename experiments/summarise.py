@@ -79,15 +79,19 @@ for _, r in load("**/container-*.json"):
 
 print("\n## Figure 4 calibration\n")
 for _, r in load("**/fig4.json"):
-    for label in ("as_published", "qspatlas_fix"):
+    print("| point | rms, fitted bars | rms, all bars | rms, misfits | failed solves | values |")
+    print("|---|---|---|---|---|---|")
+    for label in ("as_published", "start", "qspatlas_fix", "fit"):
         if label in r:
-            print(f"- {label}: rms over all {r['targets']} targets {r[label]['rms_all']:.3f}, "
-                  f"over the 60 without the 6 known misfits {r[label]['rms_good']:.4f}")
+            p = r[label]
+            nan = p.get("nan_targets", [])
+            values = ", ".join(f"{k} {v:.4g}" for k, v in p["values"].items()) if "values" in p else ""
+            print(f"| {label} | {p['rms_good']:.4f} | {p.get('rms_finite', p.get('rms_all', float('nan'))):.3f} | "
+                  f"{p.get('rms_misfits', float('nan')):.2f} | "
+                  f"{len(nan)}{' (' + ', '.join(nan) + ')' if nan else ''} | {values} |")
+    print("\nRMS in log10 units over the bars whose solve succeeded: 60 fitted, 66 in all, 6 misfits when none fail.")
     if "fit" in r:
-        f = r["fit"]
-        print(f"- fit ({r['value_and_grad_evals']} gradient evaluations, {r['calibration_s']:.0f} s): rms all "
-              f"{f['rms_all']:.3f}, without misfits {f['rms_good']:.4f}; " +
-              ", ".join(f"{k} {v:.4g}" for k, v in f["values"].items()))
+        print(f"\nFit: {r['value_and_grad_evals']} gradient evaluations, {r['calibration_s']:.0f} s; {r['fit']['message']}")
 
 print("\n## check_gradients step rules\n")
 for p, r in load("**/gradcheck-*.json"):
