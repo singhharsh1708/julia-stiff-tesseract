@@ -4,12 +4,15 @@
 #
 # CI run 1 (ModelingToolkit model): every EnzymeVJP adjoint was off by 2-55 % against ForwardDiff and took
 # 7-25 minutes per call, warm calls included; the same GaussAdjoint with ReverseDiffVJP was right to 1e-7 in
-# under a second. This changes one thing at a time, on the generated model, 2 parameters:
+# under a second. This changes one thing at a time, on the generated model, 2 parameters.
+# experiments/enzymevjp_mechanism.jl has the cause.
 #
-# restart  doses by restarting the solve, analytic Jacobian, Rodas5P (as experiments/routes.jl)
+# The variant is a `+`-joined list of changes from the setting of experiments/routes.jl (doses by restarting the
+# solve over 26 weeks, analytic Jacobian, Rodas5P with ForwardDiff Jacobians); `restart` changes nothing.
+#
 # single   one dose and one solve over the first 21 days (no restarts)
-# nojac    restart, without the analytic Jacobian in the ODEFunction
-# fdjac    restart, Rodas5P(autodiff = AutoFiniteDiff()): no dual numbers through the adjoint's VJP
+# nojac    no analytic Jacobian in the ODEFunction
+# fdjac    Rodas5P(autodiff = AutoFiniteDiff()): no dual numbers through the adjoint's VJP
 #
 # Each variant is differentiated with GaussAdjoint + EnzymeVJP and, as a control, GaussAdjoint + ReverseDiffVJP;
 # both are compared with ForwardDiff through the same function.
@@ -18,14 +21,16 @@ using StiffTesseract, LinearAlgebra, ForwardDiff, JSON3, Zygote, SciMLSensitivit
 using OrdinaryDiffEq: ODEFunction, ODEProblem, solve, Rodas5P, AutoFiniteDiff
 const ST = StiffTesseract
 variant, outfile = ARGS
+const CHANGES = split(variant, "+")
+issubset(CHANGES, ["restart", "single", "nojac", "fdjac"]) || error("unknown variant $variant")
 
 fields = ["V_blood", "L0"]
 const BASE = ST.human_raw(; scenario = "med_growth", V_blood = 5.0e6)
 theta = [Float64(getfield(BASE, Symbol(f))) for f in fields]
 const E_A1 = [i == ST.I_A1 ? 1.0 : 0.0 for i in eachindex(ST.UNKNOWNS)]
-const FUNC = variant == "nojac" ? ODEFunction{true}(ST.lindauer_rhs!) : ST.FUNC
-const ALG = variant == "fdjac" ? Rodas5P(autodiff = AutoFiniteDiff()) : Rodas5P()
-const T_END = variant == "single" ? 21.0 * 24 : ST.T_END_DAYS * 24
+const FUNC = "nojac" in CHANGES ? ODEFunction{true}(ST.lindauer_rhs!) : ST.FUNC
+const ALG = "fdjac" in CHANGES ? Rodas5P(autodiff = AutoFiniteDiff()) : Rodas5P()
+const T_END = "single" in CHANGES ? 21.0 * 24 : ST.T_END_DAYS * 24
 const DOSE_TIMES = collect(0.0:(21.0 * 24):(T_END - 1e-9))
 
 # Tumour volume at the end, non-mutating so Zygote can take it.

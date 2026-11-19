@@ -8,6 +8,8 @@
 # adjoint-gauss-enzyme      Zygote + SciMLSensitivity GaussAdjoint(autojacvec = EnzymeVJP())
 # adjoint-gauss-reversediff Zygote + GaussAdjoint(autojacvec = ReverseDiffVJP(true))
 # adjoint-interp-enzyme     Zygote + InterpolatingAdjoint(autojacvec = EnzymeVJP())
+# adjoint-gauss-enzyme-fdjac  GaussAdjoint(autojacvec = EnzymeVJP()) with Rodas5P(autodiff = AutoFiniteDiff()), so no
+#                           ForwardDiff Duals reach Enzyme (see experiments/enzymevjp_mechanism.jl)
 #
 # One route and size per process, so the first call measures compilation. The ForwardDiff reference is
 # computed after the timings, so it cannot warm up the route being timed.
@@ -41,12 +43,14 @@ elseif route == "enzyme"
     end
 elseif startswith(route, "adjoint")
     using Zygote, SciMLSensitivity
-    using OrdinaryDiffEq: ODEProblem, solve, Rodas5P
+    using OrdinaryDiffEq: ODEProblem, solve, Rodas5P, AutoFiniteDiff
     const SENSEALG = Dict(
         "adjoint-gauss-enzyme" => GaussAdjoint(autojacvec = EnzymeVJP()),
         "adjoint-gauss-reversediff" => GaussAdjoint(autojacvec = ReverseDiffVJP(true)),
         "adjoint-interp-enzyme" => InterpolatingAdjoint(autojacvec = EnzymeVJP()),
+        "adjoint-gauss-enzyme-fdjac" => GaussAdjoint(autojacvec = EnzymeVJP()),
     )[route]
+    const ALG = route == "adjoint-gauss-enzyme-fdjac" ? Rodas5P(autodiff = AutoFiniteDiff()) : Rodas5P()
     const E_A1 = [i == ST.I_A1 ? 1.0 : 0.0 for i in eachindex(ST.UNKNOWNS)]
     # Non-mutating copy of StiffTesseract._simulate, as Zygote needs: no `u[i] += dose`, no filled arrays.
     function simulate_pure(th)
@@ -58,7 +62,7 @@ elseif startswith(route, "adjoint")
             t1 = k < length(dts) ? dts[k + 1] : t_end
             u = u .+ ST.dose_nmol(5.0) .* E_A1
             inseg = [t for t in ts .* 24 if t0 <= t < t1 || (k == length(dts) && t == t1)]
-            sol = solve(ODEProblem(ST.FUNC, u, (t0, t1), p), Rodas5P(); ST.SOLVE_KW..., dtmax = 24.0,
+            sol = solve(ODEProblem(ST.FUNC, u, (t0, t1), p), ALG; ST.SOLVE_KW..., dtmax = 24.0,
                 saveat = vcat(inseg, t1), sensealg = SENSEALG)
             seg = sol.u[1:length(inseg)]
             out_tv = vcat(out_tv, [s[ST.I_TV] for s in seg])

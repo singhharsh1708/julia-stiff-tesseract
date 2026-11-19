@@ -5,7 +5,8 @@ import pathlib
 import sys
 
 root = pathlib.Path(sys.argv[1])
-ROUTES = ["forwarddiff", "enzyme", "adjoint-gauss-enzyme", "adjoint-gauss-reversediff", "adjoint-interp-enzyme"]
+ROUTES = ["forwarddiff", "enzyme", "adjoint-gauss-enzyme", "adjoint-gauss-enzyme-fdjac", "adjoint-gauss-reversediff",
+          "adjoint-interp-enzyme"]
 
 
 def load(pattern):
@@ -39,6 +40,8 @@ print("\n## Where EnzymeVJP goes wrong (GaussAdjoint, 2 parameters, vs ForwardDi
 print("| variant | EnzymeVJP first / second | EnzymeVJP max rel. err | ReverseDiffVJP first / second | ReverseDiffVJP max rel. err |")
 print("|---|---|---|---|---|")
 for _, r in load("**/enzymevjp-*.json"):
+    if "variant" not in r:
+        continue
     cells = []
     for k in ("enzymevjp", "reversediffvjp"):
         v = r.get(k, {})
@@ -47,6 +50,10 @@ for _, r in load("**/enzymevjp-*.json"):
         else:
             cells += ["failed: " + v.get("error", "no result")[:80].replace("|", "/").replace("\n", " "), "-"]
     print(f"| {r['variant']} | " + " | ".join(cells) + " |")
+
+for _, r in load("**/enzymevjp-mechanism.json"):
+    print("\nComponent checks (max rel. error at t = 1, 24, 240 h): " + "; ".join(
+        f"{rhs} {k} {[float(f'{x:.2g}') for x in v]}" for rhs in ("generated", "branchless") for k, v in r[rhs].items()))
 
 print("\n## First call through juliacall, with and without a system image\n")
 print("| run | load | first apply | warm apply | first VJP | warm VJP |")

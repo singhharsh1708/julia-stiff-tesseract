@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        route: [forwarddiff, enzyme, adjoint-gauss-enzyme, adjoint-gauss-reversediff, adjoint-interp-enzyme]
+        route: [forwarddiff, enzyme, adjoint-gauss-enzyme, adjoint-gauss-enzyme-fdjac, adjoint-gauss-reversediff, adjoint-interp-enzyme]
         nparams: [2, 8, 16]
     steps:
       - uses: actions/checkout@v4
@@ -54,7 +54,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [restart, single, nojac, fdjac]
+        variant: [restart, single, restart+fdjac, single+fdjac]
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
@@ -66,6 +66,9 @@ jobs:
         run: |
           mkdir -p out
           julia --project=tools experiments/enzymevjp_probe.jl ${{ matrix.variant }} out/enzymevjp-${{ matrix.variant }}.json
+      - name: Mechanism (component checks)
+        if: matrix.variant == 'single'
+        run: julia --project=tools experiments/enzymevjp_mechanism.jl out/enzymevjp-mechanism.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
