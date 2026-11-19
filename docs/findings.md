@@ -30,12 +30,13 @@ known misfits (the digitised values are read from QSPAtlas at run time and not s
 | gradient fit, 34 evaluations (618 s in CI, 283 s on a laptop) | 0.0053 | 0 |
 
 The fit lands on L0 0.00355/day, SLtg 6.35e-7, KdegPD1 0.00253 and 5.11 L, next to QSPAtlas's 0.0036, 6.247e-7,
-0.00246 and 5 L, reproducibly (CI and local agree to ten digits). Served, each evaluation is 60 applies and 60
-VJPs of the Julia Tesseract with 4 or 5 parameters: 0.30 s per apply and VJP pair in CI, 0.14 s on the laptop.
-Whether the exact gradient was cheaper or more useful than finite differences in this fit was not measured; no fit
-by finite differences was run. As published, three perturbed solves fail, and the optimiser needs the Tesseract
-to return NaN for them rather than raise (section 6, item 3); in CI two of the 34 evaluations (line-search trial
-points) returned NaN, which the script treats as a rejected step (job log of run 44514707281).
+0.00246 and 5 L, reproducibly (CI and local agree to ten digits). Served, each evaluation is 60 applies and 60 VJPs
+of the Julia Tesseract with 4 or 5 parameters; in CI a steady evaluation took 10.6-13.8 s, and the first evaluation
+and the two failed trial points below took 220 of the 618 s (job log of run 44514707281). Whether the exact gradient
+was cheaper or more useful than finite differences in this fit was not measured; no fit by finite differences was
+run. As published, three perturbed solves fail, and the optimiser needs the Tesseract to return NaN for them rather
+than raise (section 6, item 3); in CI two of the 34 evaluations (line-search trial points) returned NaN, which the
+script treats as a rejected step (job log of run 44514707281).
 
 ## 2. What a Julia Tesseract costs, and how to cut it
 
