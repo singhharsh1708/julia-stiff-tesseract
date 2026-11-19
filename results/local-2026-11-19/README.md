@@ -1,7 +1,7 @@
 # Generated model, 2026-11-19, MacBook (Apple silicon), Julia 1.10.12
 
 - `local-forwarddiff-2.json`, `local-adjoint-gauss-reversediff-2.json`: `experiments/routes.jl` at 2 parameters on
-  the generated model. ForwardDiff: load 1.9 s, first VJP 3.2 s, warm 39 ms. GaussAdjoint + ReverseDiffVJP: first
+  the generated model. ForwardDiff: load 2.3 s, first VJP 3.2 s, warm 38 ms. GaussAdjoint + ReverseDiffVJP: first
   19.7 s, warm 0.58 s, 3e-8 from ForwardDiff. `local-adjoint-gauss-enzyme-fdjac-2.json`: GaussAdjoint + EnzymeVJP with
   finite-difference solver Jacobians, first 22.7 s, warm 35 ms, 3e-8.
 - `gradcheck-toy.json`: `experiments/gradcheck_grid.py toy`. Per rule and case, `passed` is check_gradients'
@@ -21,7 +21,8 @@
 - `enzymevjp-zero-tderiv.json`: `experiments/enzymevjp_zero_tderiv.jl`. ReverseDiffVJP with only the time
   derivative zeroed gives EnzymeVJP's wrong gradient to 8 digits, with a maxiters warning (10^6 calls at a Dual
   time). So the zero time derivative stalls the Rosenbrock adjoint and the cut-short gradient is returned with a
-  warning only; the λ-Jacobian error is real but does not change this gradient. Robertson (integer powers) and a
+  warning only. The λ-Jacobian error is a property of Enzyme over Duals that GaussAdjoint does not reach: it
+  builds the adjoint Jacobian with ForwardDiff on the forward rhs (build_adjoint_jac), not through the VJP. Robertson (integer powers) and a
   two-state toy with `u^1.5` showed no gradient error above 5e-7 (scratch runs, not kept; maxiters not checked).
 - Not kept: GaussAdjoint with FBDF gave a near-zero gradient with every VJP backend, including ReverseDiffVJP and
   finite-difference Jacobians; a separate problem (possibly also a stalled adjoint), not followed up.

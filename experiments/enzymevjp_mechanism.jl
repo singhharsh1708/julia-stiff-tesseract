@@ -14,8 +14,10 @@
 #    finite-difference solver Jacobians both give the right one (enzymevjp_probe.jl).
 # 2. Jacobian in λ: the Dual direction is in λ and y's partials are zero. This is right unless a Dual rule in the
 #    rhs takes a shortcut on zero partials; ForwardDiff's `^(::Dual, ::Real)` (and NaNMath.pow) does, so the terms
-#    with a non-integer power are lost. A real error in the adjoint's Jacobian, but not the cause here: with
-#    KenCarp4, whose Jacobian still goes through it, the gradient is right.
+#    with a non-integer power are lost. GaussAdjoint does not reach this: it builds the adjoint's Jacobian as
+#    -(df/du)' with ForwardDiff on the forward rhs (SciMLSensitivity's build_adjoint_jac), not through the VJP.
+#    An adjoint that differentiates the VJP itself (InterpolatingAdjoint does not call build_adjoint_jac) may
+#    reach it; not measured.
 #
 # Each check compares with ForwardDiff on the plain rhs. `branchless` is the same rhs with NaNMath.pow(x, y)
 # written as exp(y log x), which removes (2) but not (1).

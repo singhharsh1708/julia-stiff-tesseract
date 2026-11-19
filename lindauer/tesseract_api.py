@@ -2,7 +2,7 @@
 
 The model is QSPAtlas.jl's ModelingToolkit rebuild, generated once into plain Julia (../tools/generate.jl), solved
 with Rodas5P with a restart at each Q3W dose (julia/src/StiffTesseract.jl). Derivatives come from forward-mode AD
-through the solver (ForwardDiff): the fastest warm route in CI run 1 up to 16 parameters, with no compile wait.
+through the solver (ForwardDiff): the fastest warm route in CI run 1 up to 16 parameters, with the shortest compile wait.
 """
 
 import os

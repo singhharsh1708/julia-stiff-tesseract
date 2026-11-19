@@ -82,13 +82,14 @@ result = Dict{String, Any}("route" => route, "nparams" => nparams, "load_s" => t
     "precompile_s" => tryparse(Int, get(ENV, "precompile_s", "")))
 try
     t1 = @elapsed (g1, n1, other) = count_maxiters(vjp)
+    merge!(result, Dict("first_s" => t1, "maxiters_warnings" => n1, "other_warnings" => other))
     t2 = @elapsed vjp()
-    merge!(result, Dict("maxiters_warnings" => n1, "other_warnings" => other, "second_s" => t2))
+    result["second_s"] = t2
     if t2 < 300   # a route that takes minutes per warm call gets no repeats, so the job ends inside its time limit
         result["warm_min_s"] = minimum(@elapsed(vjp()) for _ in 1:2)
     end
     ref = ST.jacobian(theta, fields, "med_growth", 5.0, 21.0, ts)' * ct
-    merge!(result, Dict("first_s" => t1, "ok" => true,
+    merge!(result, Dict("ok" => true,
         "max_rel_err_vs_forwarddiff" => maximum(abs.(g1 .- ref) ./ max.(abs.(ref), 1e-300))))
 catch e
     merge!(result, Dict("ok" => false, "error" => first(sprint(showerror, e), 2000)))

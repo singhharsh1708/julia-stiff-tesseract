@@ -22,19 +22,20 @@ def s(x, unit=" s"):
     return "-" if x is None else f"{x:.3g}{unit}"
 
 
-print("## VJP routes (generated model)\n")
-print("| route | params | first call | warm (min of 2) | max rel. err vs ForwardDiff | maxiters warnings | note |")
-print("|---|---|---|---|---|---|---|")
+print("## VJP routes\n")
+print("| route | params | first call | warm (min of 2, or second call) | max rel. err vs ForwardDiff | maxiters warnings | other warnings | note |")
+print("|---|---|---|---|---|---|---|---|")
 routes = {(r["route"], r["nparams"]): r for _, r in load("**/route-*.json")}
 for rt in ROUTES:
     for n in (2, 8, 16):
         r = routes.get((rt, n))
         if r is None:
-            print(f"| {rt} | {n} | - | - | - | - | no result |")
+            print(f"| {rt} | {n} | - | - | - | - | - | no result |")
             continue
         note = "" if r.get("ok") else r.get("error", "")[:100].replace("|", "/").replace("\n", " ")
-        print(f"| {rt} | {n} | {s(r.get('first_s'))} | {s(r.get('warm_min_s'))} | "
-              f"{s(r.get('max_rel_err_vs_forwarddiff'), '')} | {r.get('maxiters_warnings', '-')} | {note} |")
+        other = "; ".join(r.get("other_warnings", []))[:100].replace("|", "/").replace("\n", " ") or "-"
+        print(f"| {rt} | {n} | {s(r.get('first_s'))} | {s(r.get('warm_min_s', r.get('second_s')))} | "
+              f"{s(r.get('max_rel_err_vs_forwarddiff'), '')} | {r.get('maxiters_warnings', '-')} | {other} | {note} |")
 
 print("\n## Where EnzymeVJP goes wrong (GaussAdjoint, 2 parameters, vs ForwardDiff on the same function)\n")
 print("| variant | EnzymeVJP first / second | EnzymeVJP max rel. err | maxiters | ReverseDiffVJP first / second | ReverseDiffVJP max rel. err | maxiters |")
