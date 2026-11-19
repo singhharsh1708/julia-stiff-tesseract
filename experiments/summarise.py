@@ -33,7 +33,10 @@ for rt in ROUTES:
             print(f"| {rt} | {n} | - | - | - | - | - | no result |")
             continue
         note = "" if r.get("ok") else r.get("error", "")[:100].replace("|", "/").replace("\n", " ")
-        other = "; ".join(r.get("other_warnings", []))[:100].replace("|", "/").replace("\n", " ") or "-"
+        if "other_warnings" not in r:
+            other = "-"
+        else:
+            other = "; ".join(r["other_warnings"])[:100].replace("|", "/").replace("\n", " ") or "none"
         print(f"| {rt} | {n} | {s(r.get('first_s'))} | {s(r.get('warm_min_s', r.get('second_s')))} | "
               f"{s(r.get('max_rel_err_vs_forwarddiff'), '')} | {r.get('maxiters_warnings', '-')} | {other} | {note} |")
 

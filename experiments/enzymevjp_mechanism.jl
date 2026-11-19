@@ -2,9 +2,9 @@
 #
 #   julia --project=tools experiments/enzymevjp_mechanism.jl [out.json]
 #
-# With its default AutoForwardDiff, the stiff solver of the adjoint ODE builds the adjoint's Jacobian and time
-# derivative with ForwardDiff, so SciMLSensitivity calls Enzyme's reverse mode on the user's rhs with Dual numbers
-# in it. Reverse mode over Duals is not forward-over-reverse:
+# With its default AutoForwardDiff, the Rosenbrock solver of the adjoint ODE takes the adjoint's time derivative
+# with ForwardDiff (its Jacobian comes from build_adjoint_jac, see 2), so SciMLSensitivity calls Enzyme's reverse
+# mode on the user's rhs with Dual numbers in it. Reverse mode over Duals is not forward-over-reverse:
 #
 # 1. Time derivative: the Dual direction is in the state y(t). Reverse mode returns the gradient with respect to
 #    y's partials, which is zero (the output's value does not depend on them), so d/dt (J' λ) comes back as 0.
@@ -14,8 +14,9 @@
 #    finite-difference solver Jacobians both give the right one (enzymevjp_probe.jl).
 # 2. Jacobian in λ: the Dual direction is in λ and y's partials are zero. This is right unless a Dual rule in the
 #    rhs takes a shortcut on zero partials; ForwardDiff's `^(::Dual, ::Real)` (and NaNMath.pow) does, so the terms
-#    with a non-integer power are lost. GaussAdjoint does not reach this: it builds the adjoint's Jacobian as
-#    -(df/du)' with ForwardDiff on the forward rhs (SciMLSensitivity's build_adjoint_jac), not through the VJP.
+#    with a non-integer power are lost. GaussAdjoint does not reach this: with a ForwardDiff solver and no
+#    jac_prototype, it builds the adjoint's Jacobian as -(df/du)' with ForwardDiff on the forward rhs
+#    (SciMLSensitivity's build_adjoint_jac), not through the VJP.
 #    An adjoint that differentiates the VJP itself (InterpolatingAdjoint does not call build_adjoint_jac) may
 #    reach it; not measured.
 #
@@ -54,7 +55,8 @@ for (label, rhs!) in (("generated", ST.lindauer_rhs!), ("branchless", Branchless
     for t in (1.0, 24.0, 240.0)
         u = sol(t); λ = randn(n); J = jac(u, t)
         push!(r["plain_vjp"], relerr(enzyme_vjp(u, λ, t), J' * λ))
-        # what Rodas5P computes for the adjoint rhs λ -> J'λ: its Jacobian in λ, all partials at once
+        # what a solver that differentiates the adjoint rhs λ -> J'λ itself would compute (not GaussAdjoint, see 2):
+        # its Jacobian in λ, all partials at once
         Jλ = ForwardDiff.jacobian(l -> enzyme_vjp(eltype(l).(u), l, t), λ)
         push!(r["jacobian_in_lambda"], relerr(Jλ, Matrix(J')))
         # and its time derivative along y' = f(y)

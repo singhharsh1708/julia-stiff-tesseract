@@ -15,14 +15,14 @@
   With KenCarp4 (ForwardDiff Jacobians, no time derivative): right to 1.3e-6, as ReverseDiffVJP (1.4e-6).
   ModelingToolkit and the dose restarts are not involved.
 - `enzymevjp-mechanism.json`: `experiments/enzymevjp_mechanism.jl`. Enzyme's VJP of the rhs is exact on Float64.
-  With ForwardDiff Duals in it, as the adjoint's stiff solver passes them, the time derivative of the VJP comes
-  back zero, and the Jacobian in λ loses the non-integer-power terms (ForwardDiff's `^(::Dual, ::Real)` skips the
-  partials when they are zero).
+  With ForwardDiff Duals in the state, as Rodas5P passes them for the adjoint's time derivative, the time
+  derivative of the VJP comes back zero. With Duals in λ, the Jacobian in λ loses the non-integer-power terms
+  (ForwardDiff's `^(::Dual, ::Real)` skips the partials when they are zero); GaussAdjoint does not take that path.
 - `enzymevjp-zero-tderiv.json`: `experiments/enzymevjp_zero_tderiv.jl`. ReverseDiffVJP with only the time
   derivative zeroed gives EnzymeVJP's wrong gradient to 8 digits, with a maxiters warning (10^6 calls at a Dual
   time). So the zero time derivative stalls the Rosenbrock adjoint and the cut-short gradient is returned with a
-  warning only. The λ-Jacobian error is a property of Enzyme over Duals that GaussAdjoint does not reach: it
-  builds the adjoint Jacobian with ForwardDiff on the forward rhs (build_adjoint_jac), not through the VJP. Robertson (integer powers) and a
-  two-state toy with `u^1.5` showed no gradient error above 5e-7 (scratch runs, not kept; maxiters not checked).
+  warning only. GaussAdjoint builds the adjoint Jacobian with ForwardDiff on the forward rhs (build_adjoint_jac),
+  not through the VJP, so the λ-Jacobian error is not reached here. Robertson (integer powers) and a two-state
+  toy with `u^1.5` showed no gradient error above 5e-7 (scratch runs, not kept; maxiters not checked).
 - Not kept: GaussAdjoint with FBDF gave a near-zero gradient with every VJP backend, including ReverseDiffVJP and
   finite-difference Jacobians; a separate problem (possibly also a stalled adjoint), not followed up.
